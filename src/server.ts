@@ -20,6 +20,9 @@ app.engine('html.js', async (filePath, options, callback) => {
 app.set('views', pageDir);
 app.set('view engine', 'html.js');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
   const pageImport = await import(pagePath);
