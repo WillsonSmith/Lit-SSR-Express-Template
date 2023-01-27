@@ -19,12 +19,15 @@ app.engine('html.js', async (filePath, options, callback) => {
 app.set('views', `${__dirname}/pages`);
 app.set('view engine', 'html.js');
 
-const pages = glob.sync(`${__dirname}/pages/**/*.html.js`);
+const pages = glob.sync(`${__dirname}/pages/**/*.*.js`);
 
 for (const pagePath of pages) {
   const pageImport = await import(pagePath);
-  const { route: routePath, get } = pageImport;
-  app.get(routePath, get);
+  const routePath = pageImport.route;
+  const get = pageImport.get;
+  const post = pageImport.post;
+  app?.get(routePath, get);
+  app?.post(routePath, post);
 }
 
 app.listen(port, () => {
