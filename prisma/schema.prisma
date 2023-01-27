@@ -11,10 +11,11 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  name           String?
+  posts          Post[]
+  authenticators Authenticators[]
 }
 
 model Post {
@@ -24,4 +25,12 @@ model Post {
   published Boolean @default(false)
   author    User    @relation(fields: [authorId], references: [id])
   authorId  Int
+}
+
+model Authenticators {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  type    String
+  secret  String
+  user    User   @relation(fields: [user_id], references: [id])
 }
