@@ -1,5 +1,5 @@
 export const route = '/api/list.json';
-export const get = async (req, res) => {
+export const get = async (_, res) => {
   res.json({
     list: [
       {
