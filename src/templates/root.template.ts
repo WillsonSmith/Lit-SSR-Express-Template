@@ -15,10 +15,6 @@ export const template = (page, data) => {
       </head>
       <body>
         ${page(data)}
-        <script type="module">
-          import { hydrate } from '/public/js/hydrate.js';
-          hydrate();
-        </script>
       </body>
     </html-so>
   `;

@@ -2,7 +2,7 @@ import type { RenderResult } from '@lit-labs/ssr';
 import { render } from '@lit-labs/ssr';
 
 export const renderPage = async (pageImport, data) => {
-  const { template, page, ...rest } = pageImport;
+  const { template, page, components, ...rest } = pageImport;
 
   return templateToString(
     render(
@@ -10,11 +10,12 @@ export const renderPage = async (pageImport, data) => {
         ...rest,
         ...data,
       })
-    )
+    ),
+    components
   );
 };
 
-async function templateToString(template: RenderResult) {
+async function templateToString(template: RenderResult, componentsToHydrate) {
   let outputString = '';
   for (const chunk of template) {
     let stringToTransform = await chunk;
@@ -26,5 +27,18 @@ async function templateToString(template: RenderResult) {
     '</title>'
   );
   outputString = outputString.replace(/<(.*?)-so/g, '<$1');
+
+  outputString = outputString.replace(
+    '</body>',
+    hydrateString(componentsToHydrate) + '</body>'
+  );
+
   return outputString;
+}
+
+function hydrateString(componentsToHydrate) {
+  return `<script type="module">
+  import { hydrate } from '/public/js/hydrate.js';
+  hydrate(${JSON.stringify(componentsToHydrate) || []});
+</script>`;
 }
