@@ -2,6 +2,7 @@ import { html } from 'lit';
 
 export const template = (page, data) => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
+
   return html`
     <!DOCTYPE html>
     <html-so lang=${lang}>
@@ -13,7 +14,7 @@ export const template = (page, data) => {
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <main>${page(data)}</main>
+        ${page(data)}
         <script type="module">
           import { hydrate } from '/public/js/hydrate.js';
           hydrate();

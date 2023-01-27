@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { html } from 'lit';
+
 export { template } from '../templates/root.template.js';
 
 export const route = '/';
