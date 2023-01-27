@@ -22,7 +22,6 @@ app.set('view engine', 'html.js');
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
-  console.log(`${__dirname}pages`, pagePath);
   const pageImport = await import(pagePath);
   const routePath = pageImport.route;
   const get = pageImport.get;

@@ -1,3 +1,5 @@
 node_modules
 .env
 app
+prisma/dev.db
+prisma/dev.db-journal
