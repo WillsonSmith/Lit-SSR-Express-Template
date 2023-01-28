@@ -1,6 +1,7 @@
+import { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 
-export const template = (page, data) => {
+export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
 
   return html`
