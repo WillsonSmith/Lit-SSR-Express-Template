@@ -13,6 +13,7 @@ export const template = (page, data): HTMLTemplateResult => {
         <title-so>${title}</title-so>
         <meta-so name="description" content=${description}></meta-so>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/public/css/index.css" />
       </head>
       <body>
         ${page(data)}

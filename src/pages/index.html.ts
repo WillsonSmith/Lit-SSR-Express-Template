@@ -30,7 +30,7 @@ export const page = ({ users = [] }: { users: User[] }) => html`
   </page-layout>
 `;
 
-import prisma from '../prisma/client.js';
+import prisma from '../db/client.js';
 export const components = ['/public/components/page-layout.js'];
 export const get = async (_: Request, res: Response) => {
   const users = await prisma.user.findMany();

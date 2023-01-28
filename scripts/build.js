@@ -4,13 +4,19 @@ import { build as esbuild } from 'esbuild';
 
 compileClient();
 compileServer();
+processCSS();
 
 if (process.argv.includes('--watch')) {
-  choki.watch('src/client/**/*.ts').on('all', (event, path) => {
-    compileClient();
-  });
-  choki.watch('src/**/*.ts').on('all', (event, path) => {
+  choki
+    .watch(['src/components/**/*.ts', 'src/public/**/*.ts'])
+    .on('all', () => {
+      compileClient();
+    });
+  choki.watch('src/**/*.ts').on('all', () => {
     compileServer();
+  });
+  choki.watch('src/**/*.css').on('all', () => {
+    processCSS();
   });
 }
 
@@ -23,7 +29,6 @@ function compileClient() {
     sourcemap: true,
     format: 'esm',
     platform: 'browser',
-    outdir: 'app/client',
   };
 
   /* @ts-ignore */
@@ -53,5 +58,20 @@ function compileServer() {
     format: 'esm',
     platform: 'node',
     outdir: 'app',
+  });
+}
+
+function processCSS() {
+  const files = glob.sync('src/**/*.css');
+  esbuild({
+    entryPoints: files.filter((file) => !file.includes('_base.css')),
+    sourcemap: true,
+    outdir: 'app/public/css',
+  });
+  esbuild({
+    entryPoints: files.filter((file) => file.includes('_base.css')),
+    bundle: true,
+    sourcemap: true,
+    outdir: 'app/public/css',
   });
 }
