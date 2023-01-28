@@ -7,8 +7,8 @@ export class PageLayout extends LitElement {
   @property({ type: String }) size: 'small' | 'medium' | 'large' = 'medium';
   render() {
     return html`
-      <h1>${this.title}</h1>
       <div class="size-${this.size}">
+        <h1>${this.title}</h1>
         <slot></slot>
       </div>
     `;
