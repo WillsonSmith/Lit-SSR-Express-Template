@@ -12,25 +12,38 @@ datasource db {
 
 model User {
   id             Int              @id @default(autoincrement())
-  email          String           @unique
   name           String?
-  posts          Post[]
   authenticators Authenticators[]
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  sessionTokens  SessionToken[]
 }
 
 model Authenticators {
-  id      Int    @id @default(autoincrement())
-  user_id Int
-  type    String
-  secret  String
-  user    User   @relation(fields: [user_id], references: [id])
+  id                  Int    @id @default(autoincrement())
+  userId              Int
+  user                User   @relation(fields: [userId], references: [id])
+  credentialPublicKey Bytes
+  credentialID        String @unique
+  counter             Int
+}
+
+model Challenge {
+  id           Int      @id @default(autoincrement())
+  challenge    String   @unique
+  sessionToken String   @unique
+  createdAt    DateTime @default(now())
+}
+
+model SessionToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }

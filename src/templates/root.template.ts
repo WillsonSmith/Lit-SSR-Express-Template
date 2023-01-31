@@ -1,6 +1,8 @@
 import { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 
+import '../components/page-layout.js';
+
 export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
 
@@ -16,7 +18,7 @@ export const template = (page, data): HTMLTemplateResult => {
         <link rel="stylesheet" href="/public/css/index.css" />
       </head>
       <body>
-        ${page(data)}
+        <page-layout title="My app" size="medium"> ${page(data)} </page-layout>
       </body>
     </html-so>
   `;
