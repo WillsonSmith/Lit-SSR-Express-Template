@@ -26,7 +26,14 @@ export function authenticate({ unauthorizedRedirect = '/login' } = {}) {
       return res.redirect(unauthorizedRedirect);
     }
 
-    req.user = dbSessionTokenWithUser.user;
+    const user = dbSessionTokenWithUser.user;
+    req.user = user;
+    // if user password and route isn't password reset, redirect to password reset
+
+    if (user.password && !req.path.includes('/password-reset')) {
+      return res.redirect('/password-reset');
+    }
+
     return next();
   };
 }
