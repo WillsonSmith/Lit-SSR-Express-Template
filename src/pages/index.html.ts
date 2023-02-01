@@ -3,41 +3,48 @@ import { html } from 'lit';
 
 export { template } from '../templates/root.template.js';
 
+interface RequestWithLocals extends Request {
+  locals: {
+    authenticated: boolean;
+    user?: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
 export const route = '/';
 export const title = 'Index';
 export const description = 'Index page';
 
-import '../components/page-layout.js';
-
-import type { User } from '@prisma/client';
-export const page = ({ users = [] }: { users: User[] }) => html`
-  <page-layout title="My app" size="medium">
-    <h2>Users</h2>
-    ${users.map((user) => html`<p>${user.name}</p>`)}
-
-    <h2>Create user</h2>
-    <form method="post">
-      <div>
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" />
-      </div>
-      <div>
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" />
-      </div>
-      <button type="submit">Create</button>
-    </form>
-  </page-layout>
-`;
+export const page = (data) => {
+  const { authenticated } = data;
+  return html`
+    ${authenticated ? html` <h1>Index</h1> ` : html`<p>Not authenticated</p>`}
+  `;
+};
 
 import prisma from '../db/client.js';
 export const components = ['/public/components/page-layout.js'];
-export const get = async (_: Request, res: Response) => {
-  const users = await prisma.user.findMany();
-  res.render('index', { users });
+
+export const middleware = [authMiddleware, userFromSession];
+export const get = async (request: RequestWithLocals, res: Response) => {
+  const authenticated = request?.locals?.authenticated;
+  const user = request?.locals?.user || {};
+
+  res.render('index', { authenticated, user });
 };
 export const post = async (req: Request, res: Response) => {
   const { name, email } = req.body;
   await prisma.user.create({ data: { name, email } });
   res.redirect('/');
 };
+
+function authMiddleware(req, _res, next) {
+  req.locals = { authenticated: true };
+  next();
+}
+
+function userFromSession(_req, _res, next) {
+  next();
+}
