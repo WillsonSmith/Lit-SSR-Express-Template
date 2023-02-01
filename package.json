@@ -9,9 +9,13 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"node scripts/build.js\" \"nodemon --delay 1 app/server.js\" \"node scripts/build.js --watch\"",
+    "start": "concurrently \"npm run build\" \"nodemon --delay 1 app/server.js\" \"npm run watch\"",
+    "build": "node scripts/build.js",
+    "watch": "node scripts/build.js --watch",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   },
   "author": "",
   "license": "ISC",

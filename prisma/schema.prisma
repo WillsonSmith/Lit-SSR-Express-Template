@@ -13,8 +13,26 @@ datasource db {
 model User {
   id             Int              @id @default(autoincrement())
   name           String?
+  password       String?
   authenticators Authenticators[]
   sessionTokens  SessionToken[]
+  role           Role             @relation(fields: [roleId], references: [id])
+  roleId         Int
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  permissions Permission[]
+  Users       User[]
+}
+
+model Permission {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  roles Role[]
 }
 
 model Authenticators {
