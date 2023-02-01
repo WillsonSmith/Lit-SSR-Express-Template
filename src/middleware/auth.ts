@@ -1,13 +1,32 @@
-export function authenticate({ redirectTo = '/login' } = {}) {
-  return (req, res, next) => {
-    req.isAuthenticated = req.isAuthenticated || isAuthenticated;
-    if (req.isAuthenticated()) {
-      return next();
+import prisma from '../db/client.js';
+export function authenticate({ unauthorizedRedirect = '/login' } = {}) {
+  return async (req, res, next) => {
+    const sessionToken = req.session.sessionToken;
+    if (!sessionToken) {
+      return res.redirect(unauthorizedRedirect);
     }
-    res.redirect(redirectTo);
-  };
-}
 
-function isAuthenticated() {
-  return true;
+    const dbSessionTokenWithUser = await prisma.sessionToken.findUnique({
+      where: {
+        token: sessionToken,
+      },
+      include: {
+        user: {
+          include: {
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!dbSessionTokenWithUser) {
+      return res.redirect(unauthorizedRedirect);
+    }
+
+    req.user = dbSessionTokenWithUser.user;
+    return next();
+  };
 }
