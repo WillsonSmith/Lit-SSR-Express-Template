@@ -8,13 +8,7 @@ export const middleware = [authenticate()];
 export const get = async (req, res) => {
   const webauthToken = req.session.webauthToken;
   if (!webauthToken) return res.redirect('/');
-
-  console.log('pccm1', req.user);
-
   if (!req.user) return res.redirect('/admin/login');
-
-  console.log('pccm');
-
   await prisma.challenge.deleteMany({
     where: {
       createdAt: {
@@ -22,8 +16,6 @@ export const get = async (req, res) => {
       },
     },
   });
-
-  console.log('pccm2');
 
   const userId = crypto.randomUUID();
   const challenge = generateRegistrationOptions({

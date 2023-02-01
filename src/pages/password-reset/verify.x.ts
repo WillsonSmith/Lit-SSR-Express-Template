@@ -6,7 +6,6 @@ export const route = '/password-reset/verify';
 import { authenticate } from '../../middleware/auth.js';
 export const middleware = [authenticate()];
 export const post = async (req, res) => {
-  console.log('test');
   await prisma.challenge.deleteMany({
     where: {
       createdAt: {
@@ -33,11 +32,8 @@ export const post = async (req, res) => {
   });
 
   if (!verification.verified) return res.redirect('/admin/login');
-
   if (!verification.registrationInfo) return res.redirect('/admin/login');
-
   const { registrationInfo } = verification;
-
   const updatedUser = await prisma.user.update({
     where: {
       id: req.user.id,
