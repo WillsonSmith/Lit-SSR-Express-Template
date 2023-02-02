@@ -43,7 +43,7 @@ function compileServer() {
     .sync('src/**/*.ts')
     .filter((file) => !file.startsWith('src/public'));
 
-  ensureSymlink('src/public/components', 'src/components');
+  ensureSymlink('src/components', 'src/public/components');
   esbuild({
     entryPoints: components,
     bundle: false,
