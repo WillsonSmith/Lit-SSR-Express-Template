@@ -10,6 +10,7 @@ import session from 'express-session';
 import { renderPage } from './renderer/render.js';
 import glob from 'glob';
 
+import { join } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const pageDir = `${__dirname}pages`;
@@ -45,6 +46,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(`${__dirname}public`));
+
+const nodeModules = join(__dirname, '..', 'node_modules');
+app.use(
+  '/public/shoelace',
+  express.static(join(nodeModules, '@shoelace-style/shoelace/dist'))
+);
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {

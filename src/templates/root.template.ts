@@ -19,6 +19,7 @@ export const template = (page, data): HTMLTemplateResult => {
       </head>
       <body>
         <page-layout title="My app" size="medium"> ${page(data)} </page-layout>
+        <script type="module" src="/public/js/global.js"></script>
       </body>
     </html-so>
   `;

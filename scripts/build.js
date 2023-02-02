@@ -1,6 +1,7 @@
 import glob from 'glob';
 import choki from 'chokidar';
 import { build as esbuild } from 'esbuild';
+import { ensureSymlink } from 'fs-extra';
 
 compileClient();
 compileServer();
@@ -41,6 +42,8 @@ function compileServer() {
   const filesOutsideOfClient = glob
     .sync('src/**/*.ts')
     .filter((file) => !file.startsWith('src/public'));
+
+  ensureSymlink('src/public/components', 'src/components');
   esbuild({
     entryPoints: components,
     bundle: false,
