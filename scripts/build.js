@@ -7,11 +7,9 @@ compileServer();
 processCSS();
 
 if (process.argv.includes('--watch')) {
-  choki
-    .watch(['src/components/**/*.ts', 'src/public/**/*.ts'])
-    .on('all', () => {
-      compileClient();
-    });
+  choki.watch(['src/public/**/*.ts']).on('all', () => {
+    compileClient();
+  });
   choki.watch('src/**/*.ts').on('all', () => {
     compileServer();
   });
@@ -21,7 +19,6 @@ if (process.argv.includes('--watch')) {
 }
 
 function compileClient() {
-  // const components = glob.sync('src/components/**/*.ts');
   const publicFiles = glob.sync('src/public/**/*.ts');
   const buildArgs = {
     bundle: true,
@@ -30,13 +27,6 @@ function compileClient() {
     format: 'esm',
     platform: 'browser',
   };
-
-  /* @ts-ignore */
-  // esbuild({
-  //   ...buildArgs,
-  //   entryPoints: components,
-  //   outdir: 'app/public/components',
-  // });
 
   /* @ts-ignore */
   esbuild({
