@@ -8,7 +8,7 @@ export const template = (page, data): HTMLTemplateResult => {
 
   return html`
     <!DOCTYPE html>
-    <html-so lang=${lang}>
+    <html-so lang=${lang} class="sl-theme-dark">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +19,7 @@ export const template = (page, data): HTMLTemplateResult => {
       </head>
       <body>
         <page-layout title="My app" size="medium"> ${page(data)} </page-layout>
+        <script type="module" src="/public/js/global.js"></script>
       </body>
     </html-so>
   `;
