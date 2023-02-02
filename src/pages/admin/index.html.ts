@@ -15,11 +15,10 @@ export const get = async (_req, res) => {
   res.render('admin');
 };
 
-import { authenticate } from '../../middleware/auth.js';
+import { authenticationMiddleware } from '../../middleware/auth.js';
 function requiresPermissionMiddleware(permission) {
   return (req, res, next) => {
-    authenticate({ unauthorizedRedirect: '/' })(req, res, () => {
-      console.log(req.user);
+    authenticationMiddleware({ unauthorizedRedirect: '/' })(req, res, () => {
       if (req.user.role.name === permission) {
         return next();
       }

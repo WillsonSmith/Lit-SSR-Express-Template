@@ -1,17 +1,6 @@
 import type { Request, Response } from 'express';
 import { html } from 'lit';
-
 export { template } from '../templates/root.template.js';
-
-interface RequestWithLocals extends Request {
-  locals: {
-    authenticated: boolean;
-    user?: {
-      id: number;
-      name: string;
-    };
-  };
-}
 
 export const route = '/';
 export const title = 'Index';
@@ -27,10 +16,13 @@ export const page = (data) => {
 import prisma from '../db/client.js';
 export const components = ['/public/components/page-layout.js'];
 
-export const middleware = [authMiddleware, userFromSession];
-export const get = async (request: RequestWithLocals, res: Response) => {
-  const authenticated = request?.locals?.authenticated;
-  const user = request?.locals?.user || {};
+type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
+
+import { authenticationMiddleware } from '../middleware/auth.js';
+export const middleware = [authenticationMiddleware()];
+export const get = async (request: RequestWithAuthDetails, res: Response) => {
+  const authenticated = request.authenticated;
+  const user = request.user || {};
 
   res.render('index', { authenticated, user });
 };
@@ -39,12 +31,3 @@ export const post = async (req: Request, res: Response) => {
   await prisma.user.create({ data: { name, email } });
   res.redirect('/');
 };
-
-function authMiddleware(req, _res, next) {
-  req.locals = { authenticated: true };
-  next();
-}
-
-function userFromSession(_req, _res, next) {
-  next();
-}

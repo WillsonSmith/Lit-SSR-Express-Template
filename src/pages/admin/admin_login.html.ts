@@ -12,7 +12,7 @@ export const page = () => {
 
 export const route = '/admin/login';
 export const get = (_req, res) => {
-  res.render('auth/admin/admin_login');
+  res.render('admin/admin_login');
 };
 
 import prisma from '../../db/client.js';
@@ -41,10 +41,6 @@ export const post = async (req, res) => {
     },
   });
   req.session.sessionToken = newSessionToken.token;
-  req.session.user = {
-    id: user.id,
-    name: user.name,
-  };
 
   res.redirect('/admin');
 };
