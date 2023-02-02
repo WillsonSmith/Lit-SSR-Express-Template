@@ -4,7 +4,6 @@ import prisma from '../../../db/client.js';
 
 export const route = '/login/verify';
 export const post = async (req, res) => {
-  console.log('test');
   try {
     const webauthToken = req.session.webauthToken;
     const challenge = await prisma.challenge.findUnique({
@@ -45,7 +44,7 @@ export const post = async (req, res) => {
         },
       },
     });
-    console.log('test', newSessionToken.token);
+
     req.session.sessionToken = newSessionToken.token;
 
     await prisma.authenticators.update({

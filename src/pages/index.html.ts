@@ -16,12 +16,13 @@ export const page = (data) => {
 import prisma from '../db/client.js';
 export const components = ['/public/components/page-layout.js'];
 
+type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
+
 import { authenticationMiddleware } from '../middleware/auth.js';
 export const middleware = [authenticationMiddleware()];
-export const get = async (request: Request, res: Response) => {
+export const get = async (request: RequestWithAuthDetails, res: Response) => {
   const authenticated = request.authenticated;
   const user = request.user || {};
-  console.log(request.user);
 
   res.render('index', { authenticated, user });
 };
