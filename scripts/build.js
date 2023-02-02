@@ -21,7 +21,7 @@ if (process.argv.includes('--watch')) {
 }
 
 function compileClient() {
-  const components = glob.sync('src/components/**/*.ts');
+  // const components = glob.sync('src/components/**/*.ts');
   const publicFiles = glob.sync('src/public/**/*.ts');
   const buildArgs = {
     bundle: true,
@@ -32,24 +32,35 @@ function compileClient() {
   };
 
   /* @ts-ignore */
-  esbuild({
-    ...buildArgs,
-    entryPoints: components,
-    outdir: 'app/public/components',
-  });
+  // esbuild({
+  //   ...buildArgs,
+  //   entryPoints: components,
+  //   outdir: 'app/public/components',
+  // });
 
   /* @ts-ignore */
   esbuild({
     ...buildArgs,
     entryPoints: publicFiles,
-    outdir: 'app/public/js',
+    outdir: 'app/public',
   });
 }
 
 function compileServer() {
+  const components = glob.sync('src/public/components/**/*.ts');
   const filesOutsideOfClient = glob
     .sync('src/**/*.ts')
     .filter((file) => !file.startsWith('src/public'));
+  esbuild({
+    entryPoints: components,
+    bundle: false,
+    splitting: false,
+    sourcemap: true,
+    format: 'esm',
+    platform: 'node',
+    outdir: 'app',
+    outbase: 'src/public',
+  });
   esbuild({
     entryPoints: filesOutsideOfClient,
     bundle: false,
