@@ -30,6 +30,22 @@ body {
   line-height: var(--sl-line-height-normal);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: var(--sl-font-weight-bold);
+  line-height: var(--sl-line-height-normal);
+}
+
+p {
+  margin: 0;
+  line-height: var(--sl-line-height-normal);
+}
+
 ul[role='list'] {
   list-style: none;
   padding: 0;

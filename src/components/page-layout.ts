@@ -3,12 +3,10 @@ import { customElement, property } from 'lit/decorators.js';
 
 @customElement(`page-layout`)
 export class PageLayout extends LitElement {
-  @property({ type: String }) title = 'My App';
   @property({ type: String }) size: 'small' | 'medium' | 'large' = 'medium';
   render() {
     return html`
       <div class="size-${this.size}">
-        <h1>${this.title}</h1>
         <slot></slot>
       </div>
     `;

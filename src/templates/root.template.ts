@@ -18,7 +18,7 @@ export const template = (page, data): HTMLTemplateResult => {
         <link rel="stylesheet" href="/public/css/index.css" />
       </head>
       <body>
-        <page-layout title="My app" size="medium"> ${page(data)} </page-layout>
+        <page-layout size="medium"> ${page(data)} </page-layout>
         <script type="module" src="/public/js/global.js"></script>
       </body>
     </html-so>
