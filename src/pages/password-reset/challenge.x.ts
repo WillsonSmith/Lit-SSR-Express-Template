@@ -3,8 +3,8 @@ export const route = '/password-reset/challenge';
 import prisma from '../../db/client.js';
 import { generateRegistrationOptions } from '@simplewebauthn/server';
 
-import { authenticate } from '../../middleware/auth.js';
-export const middleware = [authenticate()];
+import { authenticationMiddleware } from '../../middleware/auth.js';
+export const middleware = [authenticationMiddleware()];
 export const get = async (req, res) => {
   const webauthToken = req.session.webauthToken;
   if (!webauthToken) return res.redirect('/');

@@ -14,6 +14,12 @@ export const page = () => {
   return html`<authentication-form></authentication-form>`;
 };
 
+import { authenticationMiddleware } from '../../middleware/auth.js';
+export const middleware = [
+  authenticationMiddleware({
+    authorizedRedirect: '/',
+  }),
+];
 export const get = async (req, res) => {
   req.session.webauthToken = crypto.randomUUID();
   res.render('auth/login');

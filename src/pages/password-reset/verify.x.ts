@@ -3,8 +3,8 @@ import prisma from '../../db/client.js';
 
 export const route = '/password-reset/verify';
 
-import { authenticate } from '../../middleware/auth.js';
-export const middleware = [authenticate()];
+import { authenticationMiddleware } from '../../middleware/auth.js';
+export const middleware = [authenticationMiddleware()];
 export const post = async (req, res) => {
   await prisma.challenge.deleteMany({
     where: {
@@ -38,6 +38,9 @@ export const post = async (req, res) => {
     where: {
       id: req.user.id,
     },
+    include: {
+      sessionTokens: true,
+    },
     data: {
       authenticators: {
         create: {
@@ -51,14 +54,13 @@ export const post = async (req, res) => {
         },
       },
       password: null,
+      sessionTokens: {
+        create: {},
+      },
     },
   });
 
-  req.session.authenticated = true;
-  req.session.user = {
-    id: updatedUser.id,
-    name: updatedUser.name,
-  };
+  req.session.sessionToken = updatedUser.sessionTokens[0].token;
 
   await prisma.challenge.deleteMany({
     where: {

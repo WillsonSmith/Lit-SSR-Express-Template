@@ -1,12 +1,25 @@
 import prisma from '../db/client.js';
-export function authenticate({ unauthorizedRedirect = '/login' } = {}) {
+
+type AuthenticationMiddlewareOptions = {
+  unauthorizedRedirect?: string;
+  authorizedRedirect?: string;
+};
+
+export function authenticationMiddleware({
+  unauthorizedRedirect,
+  authorizedRedirect,
+}: AuthenticationMiddlewareOptions = {}) {
   return async (req, res, next) => {
     const sessionToken = req.session.sessionToken;
     if (!sessionToken) {
-      return res.redirect(unauthorizedRedirect);
+      req.authenticated = false;
+      if (unauthorizedRedirect) {
+        return res.redirect(unauthorizedRedirect);
+      }
+      return next();
     }
 
-    const dbSessionTokenWithUser = await prisma.sessionToken.findUnique({
+    const session = await prisma.sessionToken.findUnique({
       where: {
         token: sessionToken,
       },
@@ -22,15 +35,25 @@ export function authenticate({ unauthorizedRedirect = '/login' } = {}) {
         },
       },
     });
-    if (!dbSessionTokenWithUser) {
-      return res.redirect(unauthorizedRedirect);
+
+    if (!session) {
+      req.authenticated = false;
+      if (unauthorizedRedirect) {
+        return res.redirect(unauthorizedRedirect);
+      }
+      return next();
     }
 
-    const user = dbSessionTokenWithUser.user;
+    const user = session.user;
     req.user = user;
+    req.authenticated = true;
 
     if (user.password && !req.path.includes('/password-reset')) {
       return res.redirect('/password-reset');
+    }
+
+    if (authorizedRedirect) {
+      return res.redirect(authorizedRedirect);
     }
 
     return next();

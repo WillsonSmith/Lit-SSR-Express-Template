@@ -14,10 +14,9 @@ export const page = () => {
   `;
 };
 
-import { authenticate } from '../../middleware/auth.js';
-export const middleware = [authenticate()];
+import { authenticationMiddleware } from '../../middleware/auth.js';
+export const middleware = [authenticationMiddleware()];
 export const get = async (req, res) => {
   req.session.webauthToken = crypto.randomUUID();
-  console.log(req.session.webauthToken);
   res.render('password-reset/password-reset');
 };

@@ -43,10 +43,11 @@ export class AuthenticationForm extends LitElement {
       body: JSON.stringify(credential),
     });
 
-    console.log(await response.json());
+    const responseJson = await response.json();
 
-    if (response.ok) {
+    if (responseJson.success) {
       console.log(`Authentication successful`);
+      window.location.reload();
     }
   }
 
@@ -66,8 +67,11 @@ export class AuthenticationForm extends LitElement {
       body: JSON.stringify(credential),
     });
 
-    if (response.ok) {
+    const responseJson = await response.json();
+
+    if (responseJson.success) {
       console.log(`Authentication successful`);
+      window.location.reload();
     }
   }
 
@@ -86,8 +90,11 @@ export class AuthenticationForm extends LitElement {
       body: JSON.stringify(credential),
     });
 
-    if (response.ok) {
+    const responseJson = await response.json();
+
+    if (responseJson.success) {
       console.log(`Registration successful`);
+      window.location.reload();
     }
   }
 
