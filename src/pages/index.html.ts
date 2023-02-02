@@ -9,12 +9,19 @@ export const description = 'Index page';
 export const page = (data) => {
   const { authenticated } = data;
   return html`
-    ${authenticated ? html` <h1>Index</h1> ` : html`<p>Not authenticated</p>`}
+    <sl-card>
+      <h1>Index</h1>
+      <p>Index page</p>
+      <p>Authenticated: ${authenticated}</p>
+    </sl-card>
   `;
 };
 
 import prisma from '../db/client.js';
-export const components = ['/public/components/page-layout.js'];
+export const components = [
+  '/public/js/pages/index.js',
+  '/public/components/page-layout.js',
+];
 
 type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
 
