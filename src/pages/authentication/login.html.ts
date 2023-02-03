@@ -8,7 +8,6 @@ export const description = 'Login page';
 
 export const components = ['/public/components/authentication/auth-form.js'];
 
-// import '../../components/authentication/authentication-form.js';
 export const page = ({ webAuthToken, magicLink }) => {
   return html`<auth-form
     primary=${magicLink ? 'register' : 'login'}

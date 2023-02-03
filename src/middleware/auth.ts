@@ -66,7 +66,7 @@ export function requiresPermissionMiddleware(
 ) {
   return (req, res, next) => {
     authenticationMiddleware(authMiddlewareOptions)(req, res, () => {
-      if (req.user.role.name === permission) {
+      if (req.user?.role?.name === permission) {
         return next();
       }
       res.redirect('/');

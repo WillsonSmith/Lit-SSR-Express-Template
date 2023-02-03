@@ -52,12 +52,11 @@ export const route = '/admin/login';
 
 import prisma from '../../db/client.js';
 
-import { requiresPermissionMiddleware } from '../../middleware/auth.js';
+import { authenticationMiddleware } from '../../middleware/auth.js';
 
 export const middleware = [
-  requiresPermissionMiddleware('ADMIN', {
-    // unauthorizedRedirect: '/admin/login',
-    authorizedRedirect: '/admin',
+  authenticationMiddleware({
+    authorizedRedirect: '/',
   }),
 ];
 
