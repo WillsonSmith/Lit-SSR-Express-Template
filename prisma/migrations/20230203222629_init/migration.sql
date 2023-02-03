@@ -37,16 +37,25 @@ CREATE TABLE "MagicLink" (
     "token" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiresAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" INTEGER NOT NULL,
-    CONSTRAINT "MagicLink_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "userId" INTEGER,
+    CONSTRAINT "MagicLink_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "WebAuthToken" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "token" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
 CREATE TABLE "Challenge" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "challenge" TEXT NOT NULL,
-    "sessionToken" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "webAuthTokenId" INTEGER NOT NULL,
+    CONSTRAINT "Challenge_webAuthTokenId_fkey" FOREIGN KEY ("webAuthTokenId") REFERENCES "WebAuthToken" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -87,10 +96,13 @@ CREATE UNIQUE INDEX "Authenticators_credentialID_key" ON "Authenticators"("crede
 CREATE UNIQUE INDEX "MagicLink_token_key" ON "MagicLink"("token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "WebAuthToken_token_key" ON "WebAuthToken"("token");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Challenge_challenge_key" ON "Challenge"("challenge");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Challenge_sessionToken_key" ON "Challenge"("sessionToken");
+CREATE UNIQUE INDEX "Challenge_webAuthTokenId_key" ON "Challenge"("webAuthTokenId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SessionToken_token_key" ON "SessionToken"("token");

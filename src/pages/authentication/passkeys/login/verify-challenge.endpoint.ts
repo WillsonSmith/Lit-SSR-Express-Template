@@ -1,14 +1,21 @@
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
 
-import prisma from '../../../db/client.js';
+import prisma from '../../../../db/client.js';
 
 export const route = '/login/verify';
+
 export const post = async (req, res) => {
   try {
-    const webauthToken = req.session.webauthToken;
+    const webAuthToken = req.body.webAuthToken;
+    const webAuthTokenFromDB = await prisma.webAuthToken.findUnique({
+      where: {
+        token: webAuthToken,
+      },
+    });
+
     const challenge = await prisma.challenge.findUnique({
       where: {
-        sessionToken: webauthToken,
+        webAuthTokenId: webAuthTokenFromDB.id,
       },
     });
 
@@ -20,11 +27,11 @@ export const post = async (req, res) => {
       },
     });
     if (!authenticator) return res.redirect('/login');
-
+    console.log(authenticator);
     const verification = await verifyAuthenticationResponse({
       authenticator: {
         credentialPublicKey: authenticator.credentialPublicKey,
-        credentialID: new Uint8Array(Buffer.from(authenticator.credentialId)),
+        credentialID: new Uint8Array(Buffer.from(authenticator.credentialID)),
         counter: authenticator.counter,
       },
       response: req.body,
@@ -56,15 +63,15 @@ export const post = async (req, res) => {
       },
     });
 
-    await prisma.challenge.delete({
+    await prisma.webAuthToken.delete({
       where: {
-        id: challenge.id,
+        token: webAuthToken,
       },
     });
 
     return res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json(error);
   }
 };
