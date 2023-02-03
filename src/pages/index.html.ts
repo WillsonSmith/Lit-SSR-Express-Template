@@ -17,14 +17,12 @@ export const page = (data) => {
   `;
 };
 
-import prisma from '../db/client.js';
 export const components = [
   '/public/js/pages/index.js',
   '/public/components/page-layout.js',
 ];
 
 type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
-
 import { authenticationMiddleware } from '../middleware/auth.js';
 export const middleware = [authenticationMiddleware()];
 export const get = async (request: RequestWithAuthDetails, res: Response) => {
@@ -32,9 +30,4 @@ export const get = async (request: RequestWithAuthDetails, res: Response) => {
   const user = request.user || {};
 
   res.render('index', { authenticated, user });
-};
-export const post = async (req: Request, res: Response) => {
-  const { name, email } = req.body;
-  await prisma.user.create({ data: { name, email } });
-  res.redirect('/');
 };

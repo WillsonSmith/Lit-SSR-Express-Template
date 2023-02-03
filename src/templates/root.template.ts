@@ -2,7 +2,7 @@ import { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 
 import '../components/page-layout.js';
-
+import '../components/navigation/main-nav.js';
 export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
 
@@ -18,7 +18,10 @@ export const template = (page, data): HTMLTemplateResult => {
         <link rel="stylesheet" href="/public/css/index.css" />
       </head>
       <body>
-        <page-layout size="medium"> ${page(data)} </page-layout>
+        <page-layout size="medium">
+          <main-nav ?authenticated=${data.authenticated}></main-nav>
+          ${page(data)}
+        </page-layout>
         <script type="module" src="/public/js/global.js"></script>
       </body>
     </html-so>

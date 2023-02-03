@@ -10,6 +10,7 @@ export const components = [
   '/public/components/authentication/authentication-form.js',
 ];
 
+import '../../components/authentication/authentication-form.js';
 export const page = () => {
   return html`<authentication-form></authentication-form>`;
 };
