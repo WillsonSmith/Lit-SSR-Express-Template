@@ -23,5 +23,5 @@ export const middleware = [
 ];
 export const get = async (req, res) => {
   req.session.webauthToken = crypto.randomUUID();
-  res.render('auth/login');
+  res.render('authentication/login');
 };

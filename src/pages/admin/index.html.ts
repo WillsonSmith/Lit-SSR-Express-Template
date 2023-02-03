@@ -9,7 +9,7 @@ export const description = 'Admin page';
 import { requiresPermissionMiddleware } from '../../middleware/auth.js';
 export const middleware = [
   requiresPermissionMiddleware('ADMIN', {
-    unauthorizedRedirect: '/login',
+    unauthorizedRedirect: '/admin/login',
   }),
 ];
 export const page = () => {
