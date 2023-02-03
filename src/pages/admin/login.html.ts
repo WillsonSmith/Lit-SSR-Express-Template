@@ -8,7 +8,7 @@ export const components = [
 ];
 
 import '../../components/forms/form-layout.js';
-export const page = ({ magicLink }) => {
+export const page = ({ magicLink, webAuthToken }) => {
   return html`
     <sl-card>
       <div slot="header">
@@ -23,6 +23,7 @@ export const page = ({ magicLink }) => {
         <auth-form
           primary=${magicLink ? 'register' : 'login'}
           magic-link=${magicLink}
+          web-auth-token=${webAuthToken}
         ></auth-form>
         ${magicLink
           ? nothing
@@ -48,14 +49,33 @@ export const page = ({ magicLink }) => {
 };
 
 export const route = '/admin/login';
-export const get = (req, res) => {
+
+import prisma from '../../db/client.js';
+
+import { requiresPermissionMiddleware } from '../../middleware/auth.js';
+
+export const middleware = [
+  requiresPermissionMiddleware('ADMIN', {
+    // unauthorizedRedirect: '/admin/login',
+    authorizedRedirect: '/admin',
+  }),
+];
+
+export const get = async (req, res) => {
   const { magicLink } = req.query;
+
+  const newWebAuth = await prisma.webAuthToken.create({
+    data: {
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+    },
+  });
+
   res.render('admin/login', {
     magicLink,
+    webAuthToken: newWebAuth.token,
   });
 };
 
-import prisma from '../../db/client.js';
 export const post = async (req, res) => {
   const userQuery = await prisma.user.findMany({
     where: {
@@ -75,7 +95,6 @@ export const post = async (req, res) => {
   await prisma.magicLink.create({
     data: {
       token: magicLink,
-      // expires in 5 minutes
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       user: {
         connect: {

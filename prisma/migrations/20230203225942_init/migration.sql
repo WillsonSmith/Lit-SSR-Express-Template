@@ -55,7 +55,7 @@ CREATE TABLE "Challenge" (
     "challenge" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "webAuthTokenId" INTEGER NOT NULL,
-    CONSTRAINT "Challenge_webAuthTokenId_fkey" FOREIGN KEY ("webAuthTokenId") REFERENCES "WebAuthToken" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Challenge_webAuthTokenId_fkey" FOREIGN KEY ("webAuthTokenId") REFERENCES "WebAuthToken" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable

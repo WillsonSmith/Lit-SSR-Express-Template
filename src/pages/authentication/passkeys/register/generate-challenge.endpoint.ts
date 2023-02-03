@@ -38,8 +38,6 @@ export const get = async (req, res) => {
       },
     });
 
-    console.log(magicLink, magicLinkToken);
-
     if (!magicLinkToken) return res.redirect('/login');
 
     const challenge = generateRegistrationOptions({
