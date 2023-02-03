@@ -18,6 +18,7 @@ model User {
   sessionTokens  SessionToken[]
   role           Role             @relation(fields: [roleId], references: [id])
   roleId         Int
+  MagicLink      MagicLink[]
 }
 
 model Role {
@@ -44,11 +45,29 @@ model Authenticators {
   counter             Int
 }
 
+model MagicLink {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+}
+
+model WebAuthToken {
+  id        Int        @id @default(autoincrement())
+  token     String     @unique @default(uuid())
+  createdAt DateTime   @default(now())
+  expiresAt DateTime   @default(now())
+  Challenge Challenge?
+}
+
 model Challenge {
-  id           Int      @id @default(autoincrement())
-  challenge    String   @unique
-  sessionToken String   @unique
-  createdAt    DateTime @default(now())
+  id             Int          @id @default(autoincrement())
+  challenge      String       @unique @default(uuid())
+  createdAt      DateTime     @default(now())
+  webAuthToken   WebAuthToken @relation(fields: [webAuthTokenId], references: [id], onDelete: Cascade)
+  webAuthTokenId Int          @unique
 }
 
 model SessionToken {

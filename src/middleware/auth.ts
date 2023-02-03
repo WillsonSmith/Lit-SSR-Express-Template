@@ -59,3 +59,17 @@ export function authenticationMiddleware({
     return next();
   };
 }
+
+export function requiresPermissionMiddleware(
+  permission,
+  authMiddlewareOptions: AuthenticationMiddlewareOptions = {}
+) {
+  return (req, res, next) => {
+    authenticationMiddleware(authMiddlewareOptions)(req, res, () => {
+      if (req.user?.role?.name === permission) {
+        return next();
+      }
+      res.redirect('/');
+    });
+  };
+}

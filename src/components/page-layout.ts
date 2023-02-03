@@ -3,12 +3,10 @@ import { customElement, property } from 'lit/decorators.js';
 
 @customElement(`page-layout`)
 export class PageLayout extends LitElement {
-  @property({ type: String }) title = 'My App';
   @property({ type: String }) size: 'small' | 'medium' | 'large' = 'medium';
   render() {
     return html`
-      <div class="size-${this.size}">
-        <h1>${this.title}</h1>
+      <div class="layout size-${this.size}">
         <slot></slot>
       </div>
     `;
@@ -31,6 +29,11 @@ export class PageLayout extends LitElement {
       .size-large {
         max-width: 80ch;
         margin: 0 auto;
+      }
+
+      .layout {
+        display: grid;
+        gap: var(--sl-spacing-medium);
       }
     `,
   ];

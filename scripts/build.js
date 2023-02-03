@@ -20,7 +20,11 @@ if (process.argv.includes('--watch')) {
 }
 
 function compileClient() {
-  const publicFiles = glob.sync('src/public/**/*.ts');
+  const components = glob.sync('src/public/components/**/*.ts');
+  const publicFiles = glob
+    .sync('src/public/**/*.ts')
+    .filter((file) => !file.startsWith('src/public/components'));
+
   const buildArgs = {
     bundle: true,
     splitting: true,
@@ -28,11 +32,12 @@ function compileClient() {
     format: 'esm',
     platform: 'browser',
   };
+  ensureSymlink('src/components', 'src/public/components');
 
   /* @ts-ignore */
   esbuild({
     ...buildArgs,
-    entryPoints: publicFiles,
+    entryPoints: [...components, ...publicFiles],
     outdir: 'app/public',
   });
 }
