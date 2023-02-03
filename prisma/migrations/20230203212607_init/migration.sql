@@ -32,6 +32,16 @@ CREATE TABLE "Authenticators" (
 );
 
 -- CreateTable
+CREATE TABLE "MagicLink" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "token" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" INTEGER NOT NULL,
+    CONSTRAINT "MagicLink_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Challenge" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "challenge" TEXT NOT NULL,
@@ -72,6 +82,9 @@ CREATE UNIQUE INDEX "Permission_name_key" ON "Permission"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Authenticators_credentialID_key" ON "Authenticators"("credentialID");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MagicLink_token_key" ON "MagicLink"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Challenge_challenge_key" ON "Challenge"("challenge");

@@ -18,6 +18,7 @@ model User {
   sessionTokens  SessionToken[]
   role           Role             @relation(fields: [roleId], references: [id])
   roleId         Int
+  MagicLink      MagicLink[]
 }
 
 model Role {
@@ -42,6 +43,15 @@ model Authenticators {
   credentialPublicKey Bytes
   credentialID        String @unique
   counter             Int
+}
+
+model MagicLink {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int
 }
 
 model Challenge {
