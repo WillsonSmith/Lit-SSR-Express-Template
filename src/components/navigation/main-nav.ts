@@ -36,30 +36,14 @@ export class MainNavItem extends LitElement {
   render() {
     return html`
       <li>
-        <a class="link" href=${this.href}>
+        <sl-button href=${this.href} pill size="small">
           <slot></slot>
-        </a>
+        </sl-button>
       </li>
     `;
   }
 
-  static styles = [
-    css`
-      .link {
-        display: block;
-        color: var(--sl-color-gray-700);
-        background: var(--sl-color-gray-100);
-        border-radius: var(--sl-border-radius-medium);
-        border: 1px solid var(--sl-color-gray-200);
-        padding: var(--sl-spacing-2x-small) var(--sl-spacing-small);
-        text-decoration: none;
-      }
-
-      .link:hover {
-        background: var(--sl-color-gray-200);
-      }
-    `,
-  ];
+  static styles = [css``];
 }
 
 declare global {
@@ -68,3 +52,5 @@ declare global {
     'main-nav-item': MainNavItem;
   }
 }
+
+import '@shoelace-style/shoelace/dist/components/button/button.js';

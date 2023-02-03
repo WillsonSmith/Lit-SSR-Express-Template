@@ -2,7 +2,7 @@ import { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 
 import '../components/page-layout.js';
-import '../components/navigation/main-nav.js';
+
 export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
 
@@ -23,6 +23,10 @@ export const template = (page, data): HTMLTemplateResult => {
           ${page(data)}
         </page-layout>
         <script type="module" src="/public/js/global.js"></script>
+        <script type="module">
+          const { hydrate } = await import('/public/js/hydrate.js');
+          hydrate(['/public/components/navigation/main-nav.js']);
+        </script>
       </body>
     </html-so>
   `;

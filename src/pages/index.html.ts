@@ -17,10 +17,7 @@ export const page = (data) => {
   `;
 };
 
-export const components = [
-  '/public/js/pages/index.js',
-  '/public/components/page-layout.js',
-];
+export const components = ['/public/js/pages/index.js'];
 
 type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
 import { authenticationMiddleware } from '../middleware/auth.js';
