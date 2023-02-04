@@ -1,5 +1,6 @@
 async function hydrate(components: string[] = []) {
   const lhsReady = import('lit/experimental-hydrate-support.js');
+  /* eslint-disable-next-line no-prototype-builtins */
   if (!HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot')) {
     const { hydrateShadowRoots } = await import(
       '@webcomponents/template-shadowroot/template-shadowroot.js'
