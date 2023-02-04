@@ -14,6 +14,22 @@ export const renderNew = function* (pageImport, data) {
       output = chunk.replace(/<title-so><!--lit-part-->/g, '<title>');
       output = output.replace(/<!--\/lit-part--><\/title-so>/g, '</title>');
       output = output.replace(/<(.*?)-so/g, '<$1');
+
+      output = output.replace(
+        '<body>',
+        `<style>
+body[unresolved] {
+  display: none;
+}
+</style>
+<script>
+if (HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot')) {
+  document.body.removeAttribute('dsd-pending');
+}
+</script>
+<body unresolved>`,
+      );
+
       output = output.replace('</body>', hydrateString(components) + '</body>');
     }
 
