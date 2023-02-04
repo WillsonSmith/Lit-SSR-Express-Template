@@ -1,24 +1,13 @@
 import { generateAuthenticationOptions } from '@simplewebauthn/server';
+export const route = '/login/generate-challenge';
 
 import prisma from '../../../../db/client.js';
-
-export const route = '/login/generate-challenge';
+import { whereCreatedFiveMinutesAgo } from '../../../../db/queries.js';
 export const get = async (req, res) => {
   try {
-    await prisma.webAuthToken.deleteMany({
-      where: {
-        createdAt: {
-          lte: new Date(Date.now() - 5 * 60 * 1000),
-        },
-      },
-    });
-    await prisma.challenge.deleteMany({
-      where: {
-        createdAt: {
-          lte: new Date(Date.now() - 5 * 60 * 1000),
-        },
-      },
-    });
+    await prisma.webAuthToken.deleteMany(whereCreatedFiveMinutesAgo);
+    await prisma.challenge.deleteMany(whereCreatedFiveMinutesAgo);
+
     const webAuthToken = req.query.webAuthToken;
     if (!webAuthToken) return res.redirect('/login');
 

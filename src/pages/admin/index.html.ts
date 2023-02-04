@@ -17,5 +17,5 @@ export const page = () => {
 };
 
 export const get = async (_req, res) => {
-  res.render('admin');
+  res.render('admin', { authenticated: true });
 };

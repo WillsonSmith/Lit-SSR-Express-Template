@@ -48,10 +48,6 @@ export function authenticationMiddleware({
     req.user = user;
     req.authenticated = true;
 
-    if (user.password && !req.path.includes('/password-reset')) {
-      return res.redirect('/password-reset');
-    }
-
     if (authorizedRedirect) {
       return res.redirect(authorizedRedirect);
     }
@@ -62,7 +58,7 @@ export function authenticationMiddleware({
 
 export function requiresPermissionMiddleware(
   permission,
-  authMiddlewareOptions: AuthenticationMiddlewareOptions = {}
+  authMiddlewareOptions: AuthenticationMiddlewareOptions = {},
 ) {
   return (req, res, next) => {
     authenticationMiddleware(authMiddlewareOptions)(req, res, () => {
