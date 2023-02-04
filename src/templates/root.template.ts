@@ -2,7 +2,6 @@ import { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 
 import '../components/page-layout.js';
-
 export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
 
