@@ -16,9 +16,14 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const pageDir = `${__dirname}pages`;
 
 app.engine('html.js', async (filePath, options, callback) => {
-  const imported = await import(filePath);
-  const markup = await renderPage(imported, options);
-  callback(null, markup);
+  try {
+    const imported = await import(filePath);
+    const markup = await renderPage(imported, options);
+    callback(null, markup);
+  } catch (error) {
+    console.error(error);
+    callback(error);
+  }
 });
 app.set('views', pageDir);
 app.set('view engine', 'html.js');
@@ -52,14 +57,10 @@ app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/sh
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
-  const pageImport = await import(pagePath);
-  const routePath = pageImport.route;
-  const get = pageImport.get;
-  const post = pageImport.post;
-  const middleware = pageImport.middleware || [];
+  const { route, get, post, middleware = [] } = await import(pagePath);
 
-  get && app.get(routePath, ...middleware, get);
-  post && app.post(routePath, ...middleware, post);
+  get && app.get(route, ...middleware, get);
+  post && app.post(route, ...middleware, post);
 }
 
 app.listen(port, () => {
