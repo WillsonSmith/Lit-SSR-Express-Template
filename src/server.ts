@@ -7,7 +7,8 @@ const port = 3000;
 
 import session from 'express-session';
 
-import { renderPage, renderNew } from './renderer/render.js';
+// import { renderPage, renderNew } from './renderer/render.js';
+import { renderPage } from './renderer/render.js';
 import glob from 'glob';
 
 import { join } from 'path';

@@ -1,42 +1,6 @@
 import type { RenderResult } from '@lit-labs/ssr';
 import { render } from '@lit-labs/ssr';
 
-export const renderNew = function* (pageImport, data) {
-  const { template, page, components, ...rest } = pageImport;
-  for (const chunk of render(
-    template(page, {
-      ...rest,
-      ...data,
-    }),
-  )) {
-    let output = chunk;
-    if (typeof chunk === 'string') {
-      output = chunk.replace(/<title-so><!--lit-part-->/g, '<title>');
-      output = output.replace(/<!--\/lit-part--><\/title-so>/g, '</title>');
-      output = output.replace(/<(.*?)-so/g, '<$1');
-
-      output = output.replace(
-        '<body>',
-        `<style>
-body[unresolved] {
-  display: none;
-}
-</style>
-<script>
-if (HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot')) {
-  document.body.removeAttribute('dsd-pending');
-}
-</script>
-<body unresolved>`,
-      );
-
-      output = output.replace('</body>', hydrateString(components) + '</body>');
-    }
-
-    yield output;
-  }
-};
-
 export const renderPage = async (pageImport, data) => {
   const { template, page, components, ...rest } = pageImport;
 
@@ -72,3 +36,40 @@ function hydrateString(componentsToHydrate) {
   hydrate(${JSON.stringify(componentsToHydrate) || []});
 </script>`;
 }
+
+// this doesn't actually work because <!--lit-part--> is on a new line.
+export const renderNew = function* (pageImport, data) {
+  const { template, page, components, ...rest } = pageImport;
+  for (const chunk of render(
+    template(page, {
+      ...rest,
+      ...data,
+    }),
+  )) {
+    let output = chunk;
+    if (typeof chunk === 'string') {
+      output = chunk.replace(/<title-so><!--lit-part-->/g, '<title>');
+      output = output.replace(/<!--\/lit-part--><\/title-so>/g, '</title>');
+      output = output.replace(/<(.*?)-so/g, '<$1');
+
+      output = output.replace(
+        '<body>',
+        `<style>
+body[unresolved] {
+  display: none;
+}
+</style>
+<script>
+if (HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot')) {
+  document.body.removeAttribute('dsd-pending');
+}
+</script>
+<body unresolved>`,
+      );
+
+      output = output.replace('</body>', hydrateString(components) + '</body>');
+    }
+
+    yield output;
+  }
+};
