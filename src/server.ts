@@ -67,6 +67,7 @@ for (const pagePath of pagePaths) {
         ...req.locals,
         ...data,
         authenticated: req.authenticated,
+        authenticatedUser: req.user,
       };
     }
     next();
