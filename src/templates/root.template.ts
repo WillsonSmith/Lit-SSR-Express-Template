@@ -21,10 +21,9 @@ export const template = (page, data): HTMLTemplateResult => {
           <main-nav ?authenticated=${data.authenticated}></main-nav>
           ${page(data)}
         </page-layout>
-        <script type="module" src="/public/js/global.js"></script>
         <script type="module">
           const { hydrate } = await import('/public/js/hydrate.js');
-          hydrate(['/public/components/navigation/main-nav.js']);
+          hydrate(['/public/js/global.js', '/public/components/navigation/main-nav.js']);
         </script>
       </body>
     </html-so>

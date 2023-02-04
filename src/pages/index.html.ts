@@ -16,14 +16,15 @@ export const page = (data: { authenticated: boolean }) => {
   `;
 };
 
-import { authenticationMiddleware } from '../middleware/auth.js';
-export const middleware = [authenticationMiddleware()];
-
 type RequestWithAuth = Request & { authenticated: boolean };
+
+export const route = '/';
 export const get = async (request: RequestWithAuth, res: Response) => {
   const authenticated = request.authenticated;
   res.render('index', { authenticated });
 };
 
-export const route = '/';
+import { authenticationMiddleware } from '../middleware/auth.js';
+export const middleware = [authenticationMiddleware()];
+
 export { template } from '../templates/root.template.js';

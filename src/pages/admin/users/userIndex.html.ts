@@ -2,13 +2,38 @@ import type { User } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { html } from 'lit';
 
+export const components = ['/public/js/pages/admin/users/index.js'];
+
+import '../../../components/Lists/resource-list/resource-list.js';
+import '../../../components/Lists/resource-list/resource-list-item.js';
+
 type Data = { users: User[] };
 export const page = ({ users }: Data) => {
   return html`
-    <h1>Users</h1>
-    <ul>
-      ${users.map(user => html`<li>${user.name}</li>`)}
-    </ul>
+    <style>
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+    <sl-card>
+      <div slot="header" class="card-header">
+        <h2>Users</h2>
+        <sl-button pill size="small" href="/admin/users/new"
+          ><sl-icon slot="prefix" name="person-plus"></sl-icon>Add user</sl-button
+        >
+      </div>
+      <div>
+        <resource-list>
+          ${users.map(
+            user => html`
+              <resource-list-item href="/admin/users/${user.id}"> ${user.name} </resource-list-item>
+            `,
+          )}
+        </resource-list>
+      </div>
+    </sl-card>
   `;
 };
 
@@ -25,4 +50,4 @@ export const get = async (_req: Request, res: Response) => {
 };
 
 export const route = '/admin/users';
-export { template } from '../../../templates/root.template.js';
+export { template } from './_template.js';
