@@ -1,8 +1,15 @@
 import { html } from 'lit';
 import prisma from '../../../db/client.js';
+import type { Role } from '@prisma/client';
+import type { UserWithRole } from '../../../types/User.js';
 
-export const page = ({ user, roles, action = '/admin/users/:id' }) => {
-  const isAdminUser = user.role.name === 'ADMIN';
+type Data = {
+  user: UserWithRole;
+  roles: Role[];
+  action?: string;
+};
+
+export const page = ({ user, roles, action = '/admin/users/:id' }: Data) => {
   return html`
     <sl-card>
       <div slot="header">
@@ -15,7 +22,8 @@ export const page = ({ user, roles, action = '/admin/users/:id' }) => {
             label="Name"
             id="name"
             name="name"
-            value="${user.name}"
+            placeholder="Name"
+            value=${user.name || ''}
             help-text="The user's name."
           ></sl-input>
           <sl-select
