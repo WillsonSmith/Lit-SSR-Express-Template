@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express';
 import { html } from 'lit';
 
 export const title = 'Admin';
@@ -18,7 +19,7 @@ export const middleware = [
     unauthorizedRedirect: '/admin/login',
   }),
 ];
-export const get = async (_req, res) => {
+export const get = async (_req: Request, res: Response) => {
   res.render('admin', { authenticated: true });
 };
 

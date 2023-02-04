@@ -1,6 +1,9 @@
+import type { User } from '@prisma/client';
+import type { Request, Response } from 'express';
 import { html } from 'lit';
 
-export const page = ({ users }) => {
+type Data = { users: User[] };
+export const page = ({ users }: Data) => {
   return html`
     <h1>Users</h1>
     <ul>
@@ -16,7 +19,7 @@ export const middleware = [
     unauthorizedRedirect: '/admin/login',
   }),
 ];
-export const get = async (_req, res) => {
+export const get = async (_req: Request, res: Response) => {
   const users = await prisma.user.findMany();
   res.render('admin/users/userIndex', { authenticated: true, users });
 };
