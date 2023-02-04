@@ -57,12 +57,32 @@ app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/sh
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
-  const { route, get, post, middleware = [] } = await import(pagePath);
+  const { route, get, post, middleware = [], handler, action } = await import(pagePath);
 
-  get && app.get(route, ...middleware, get);
-  post && app.post(route, ...middleware, post);
+  const handlerMiddleware = async (req, res, next) => {
+    req.locals ??= {};
+    const data = handler ? await handler(req, res) : null;
+    if (data) {
+      req.locals = {
+        ...req.locals,
+        ...data,
+      };
+    }
+    next();
+  };
+
+  get && app.get(route, ...middleware, handler ? handlerMiddleware : get, renderIt(pagePath));
+  post && app.post(route, ...middleware, action ? action : post);
 }
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+function renderIt(path) {
+  const templatePath = path.replace(`${__dirname}pages/`, '').replace('.html.js', '');
+  if (templatePath.endsWith('.js')) return (_, res) => res.send('ok');
+  return (req, res) => {
+    res.render(templatePath, req.locals);
+  };
+}

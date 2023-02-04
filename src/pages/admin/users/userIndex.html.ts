@@ -44,6 +44,14 @@ export const middleware = [
     unauthorizedRedirect: '/admin/login',
   }),
 ];
+
+export const handler = async () => {
+  const users = await prisma.user.findMany();
+  return {
+    users,
+  };
+};
+
 export const get = async (_req: Request, res: Response) => {
   const users = await prisma.user.findMany();
   res.render('admin/users/userIndex', { authenticated: true, users });
