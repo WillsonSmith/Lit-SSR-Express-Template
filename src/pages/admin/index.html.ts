@@ -13,7 +13,13 @@ export const middleware = [
   }),
 ];
 export const page = () => {
-  return html`<h1>Admin</h1>`;
+  return html`
+    <h1>Admin</h1>
+    <p>Admin page</p>
+    <div>
+      <a href="/admin/users">Users</a>
+    </div>
+  `;
 };
 
 export const get = async (_req, res) => {
