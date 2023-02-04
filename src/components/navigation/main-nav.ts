@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-@customElement(`main-nav`)
+@customElement('main-nav')
 export class MainNav extends LitElement {
   @property({ type: Boolean }) authenticated = false;
   render() {
@@ -30,7 +30,7 @@ export class MainNav extends LitElement {
   ];
 }
 
-@customElement(`main-nav-item`)
+@customElement('main-nav-item')
 export class MainNavItem extends LitElement {
   @property({ type: String }) href = '';
   render() {

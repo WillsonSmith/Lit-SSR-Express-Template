@@ -27,7 +27,7 @@ export const post = async (req, res) => {
       },
     });
     if (!authenticator) return res.redirect('/login');
-    console.log(authenticator);
+
     const verification = await verifyAuthenticationResponse({
       authenticator: {
         credentialPublicKey: authenticator.credentialPublicKey,

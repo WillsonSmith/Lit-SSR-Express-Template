@@ -4,22 +4,11 @@ import prisma from '../../../../db/client.js';
 
 export const route = '/register/generate-challenge';
 
+import { whereCreatedFiveMinutesAgo } from '../../../../db/queries.js';
 export const get = async (req, res) => {
   try {
-    await prisma.webAuthToken.deleteMany({
-      where: {
-        createdAt: {
-          lte: new Date(Date.now() - 5 * 60 * 1000),
-        },
-      },
-    });
-    await prisma.challenge.deleteMany({
-      where: {
-        createdAt: {
-          lte: new Date(Date.now() - 5 * 60 * 1000),
-        },
-      },
-    });
+    await prisma.webAuthToken.deleteMany(whereCreatedFiveMinutesAgo);
+    await prisma.challenge.deleteMany(whereCreatedFiveMinutesAgo);
     const webAuthToken = req.query.webAuthToken;
     const magicLink = req.query.magicLink;
     if (!webAuthToken || !magicLink) return res.redirect('/login');

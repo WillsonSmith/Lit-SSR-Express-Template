@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-@customElement(`form-layout`)
+@customElement('form-layout')
 export class MyComponent extends LitElement {
-  @property({ type: Number }) columns: number = 1;
+  @property({ type: Number }) columns = 1;
   render() {
     return html`
       <div class="form-layout columns-${this.columns}">
