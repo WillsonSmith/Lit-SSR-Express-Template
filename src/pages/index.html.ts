@@ -5,7 +5,7 @@ export const title = 'Index';
 export const description = 'Index page';
 export const components = ['/public/js/pages/index.js'];
 
-export const page = data => {
+export const page = (data: { authenticated: boolean }) => {
   const { authenticated } = data;
   return html`
     <sl-card>
