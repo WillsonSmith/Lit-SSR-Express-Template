@@ -1,14 +1,12 @@
 import bcrypt from 'bcrypt';
 import { html, nothing } from 'lit';
-
-export { template } from '../../templates/root.template.js';
+import '../../components/forms/form-layout.js';
 
 export const components = [
-  '/public/js/pages/adminLogin.js',
+  '/public/js/pages/admin/login.js',
   '/public/components/authentication/auth-form.js',
 ];
 
-import '../../components/forms/form-layout.js';
 export const page = ({ magicLink, webAuthToken }) => {
   return html`
     <sl-card>
@@ -106,3 +104,5 @@ export const post = async (req, res) => {
 
   res.redirect(`/admin/login?magicLink=${magicLink}`);
 };
+
+export { template } from '../../templates/root.template.js';
