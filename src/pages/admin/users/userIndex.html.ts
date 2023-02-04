@@ -7,14 +7,15 @@ import '../../../components/Lists/resource-list/resource-list-item.js';
 import prisma from '../../../db/client.js';
 
 export const route = '/admin/users';
-export const handler = async () => {
+export const handler = async req => {
   const users = await prisma.user.findMany();
   return {
     users,
+    path: req.path,
   };
 };
 
-type Data = { users: User[] };
+type Data = { users: User[]; path?: string };
 export const page = ({ users }: Data) => {
   return html`
     <style>

@@ -7,6 +7,7 @@ const port = 3000;
 
 import session from 'express-session';
 
+// import { renderPage, renderNew } from './renderer/render.js';
 import { renderPage } from './renderer/render.js';
 import glob from 'glob';
 
@@ -72,7 +73,7 @@ for (const pagePath of pagePaths) {
     next();
   };
 
-  app.get(route, ...middleware, get || handlerMiddleware, renderIt(pagePath));
+  app.get(route, ...middleware, get || handlerMiddleware, await renderIt(pagePath));
 
   if (action) app.post(route, ...middleware, action);
   else if (post) app.post(route, ...middleware, post);
@@ -82,10 +83,21 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
-function renderIt(path) {
+async function renderIt(path) {
   const templatePath = path.replace(`${__dirname}pages/`, '').replace('.html.js', '');
   if (templatePath.endsWith('.js')) return (_, res) => res.send('ok');
-  return (req, res) => {
+  return async (req, res) => {
+    // try {
+    //   res.setHeader('Content-Type', 'text/html');
+    //   const imported = await import(path);
+    //   for (const chunk of renderNew(imported, req.locals)) {
+    //     res.write(chunk);
+    //   }
+    //   res.end();
+    // } catch (error) {
+    //   console.error(error);
+    //   res.status(500).send('Something went wrong.');
+    // }
     res.render(templatePath, req.locals);
   };
 }
