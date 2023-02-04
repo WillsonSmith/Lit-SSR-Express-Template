@@ -66,13 +66,26 @@ for (const pagePath of pagePaths) {
       req.locals = {
         ...req.locals,
         ...data,
+        authenticated: req.authenticated,
       };
     }
     next();
   };
 
-  get && app.get(route, ...middleware, handler ? handlerMiddleware : get, renderIt(pagePath));
-  post && app.post(route, ...middleware, action ? action : post);
+  if (handler) {
+    app.get(route, ...middleware, handlerMiddleware, renderIt(pagePath));
+  }
+
+  if (action) app.post(route, ...middleware, action);
+
+  if (get) {
+    console.warn(`${route}: Get is deprecated, use handler instead.`);
+    app.get(route, ...middleware, get);
+  }
+  if (post) {
+    console.warn(`${route}: Post is deprecated, use action instead.`);
+    app.post(route, ...middleware, post);
+  }
 }
 
 app.listen(port, () => {
