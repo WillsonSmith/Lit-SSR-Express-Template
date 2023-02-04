@@ -9,29 +9,23 @@ export const renderPage = async (pageImport, data) => {
       template(page, {
         ...rest,
         ...data,
-      })
+      }),
     ),
-    components
+    components,
   );
 };
 
 async function templateToString(template: RenderResult, componentsToHydrate) {
   let outputString = '';
   for (const chunk of template) {
-    let stringToTransform = await chunk;
+    const stringToTransform = await chunk;
     outputString += stringToTransform;
   }
   outputString = outputString.replace(/<title-so><!--lit-part-->/g, '<title>');
-  outputString = outputString.replace(
-    /<!--\/lit-part--><\/title-so>/g,
-    '</title>'
-  );
+  outputString = outputString.replace(/<!--\/lit-part--><\/title-so>/g, '</title>');
   outputString = outputString.replace(/<(.*?)-so/g, '<$1');
 
-  outputString = outputString.replace(
-    '</body>',
-    hydrateString(componentsToHydrate) + '</body>'
-  );
+  outputString = outputString.replace('</body>', hydrateString(componentsToHydrate) + '</body>');
 
   return outputString;
 }

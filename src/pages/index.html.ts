@@ -1,10 +1,11 @@
-import type { Request, Response } from 'express';
 import { html } from 'lit';
 
-export const title = 'Index';
-export const description = 'Index page';
+export const title = 'Home page';
+export const description = 'This is the home page of the website.';
 export const components = ['/public/js/pages/index.js'];
 
+export const route = '/';
+export { template } from '../templates/root.template.js';
 export const page = (data: { authenticated: boolean }) => {
   const { authenticated } = data;
   return html`
@@ -16,15 +17,5 @@ export const page = (data: { authenticated: boolean }) => {
   `;
 };
 
-type RequestWithAuth = Request & { authenticated: boolean };
-
-export const route = '/';
-export const get = async (request: RequestWithAuth, res: Response) => {
-  const authenticated = request.authenticated;
-  res.render('index', { authenticated });
-};
-
 import { authenticationMiddleware } from '../middleware/auth.js';
 export const middleware = [authenticationMiddleware()];
-
-export { template } from '../templates/root.template.js';

@@ -16,9 +16,14 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const pageDir = `${__dirname}pages`;
 
 app.engine('html.js', async (filePath, options, callback) => {
-  const imported = await import(filePath);
-  const markup = await renderPage(imported, options);
-  callback(null, markup);
+  try {
+    const imported = await import(filePath);
+    const markup = await renderPage(imported, options);
+    callback(null, markup);
+  } catch (error) {
+    console.error(error);
+    callback(error);
+  }
 });
 app.set('views', pageDir);
 app.set('view engine', 'html.js');
@@ -52,16 +57,35 @@ app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/sh
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
-  const pageImport = await import(pagePath);
-  const routePath = pageImport.route;
-  const get = pageImport.get;
-  const post = pageImport.post;
-  const middleware = pageImport.middleware || [];
+  const { route, get, post, middleware = [], handler, action } = await import(pagePath);
 
-  get && app.get(routePath, ...middleware, get);
-  post && app.post(routePath, ...middleware, post);
+  const handlerMiddleware = async (req, res, next) => {
+    req.locals ??= {};
+    const data = handler ? await handler(req, res) : null;
+    if (data) {
+      req.locals = {
+        ...req.locals,
+        ...data,
+      };
+    }
+    req.locals.authenticated = req.authenticated;
+    next();
+  };
+
+  app.get(route, ...middleware, get || handlerMiddleware, renderIt(pagePath));
+
+  if (action) app.post(route, ...middleware, action);
+  else if (post) app.post(route, ...middleware, post);
 }
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+function renderIt(path) {
+  const templatePath = path.replace(`${__dirname}pages/`, '').replace('.html.js', '');
+  if (templatePath.endsWith('.js')) return (_, res) => res.send('ok');
+  return (req, res) => {
+    res.render(templatePath, req.locals);
+  };
+}

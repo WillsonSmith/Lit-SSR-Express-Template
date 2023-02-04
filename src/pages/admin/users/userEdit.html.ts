@@ -1,6 +1,5 @@
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import prisma from '../../../db/client.js';
 import type { Role } from '@prisma/client';
 import type { UserWithRole } from '../../../types/User.js';
 
@@ -10,11 +9,31 @@ type Data = {
   action?: string;
 };
 
+import prisma from '../../../db/client.js';
+export const route = '/admin/users/:id';
+
+export const action = async (req, res) => {
+  const { id } = req.params;
+  await updateUser(id, req.body);
+  res.redirect('/admin/users');
+};
+export const handler = async req => {
+  const { id } = req.params;
+  const user = await getUser(id);
+  const roles = await prisma.role.findMany();
+
+  return {
+    user,
+    roles,
+    action: req.path,
+  };
+};
+
 export const page = ({ user, roles, action }: Data) => {
   const ActionType = user.id ? 'Update' : 'Create';
 
   const form = html`
-    <form id="user-form" method="post" action=${ifDefined(action)}>
+    <form id="user-form" method="post" formAction=${ifDefined(action)}>
       <form-layout columns=${2}>
         <sl-input
           label="Name"
@@ -68,9 +87,16 @@ export const middleware = [
   requiresPermissionMiddleware('ADMIN', { unauthorizedRedirect: '/admin/login' }),
 ];
 
-export const route = '/admin/users/:id';
-export const get = async (req, res) => {
-  const { id } = req.params;
+export { template } from './_template.js';
+
+type UserFields = {
+  id: string;
+  role: string;
+  name?: string;
+  password?: string;
+};
+
+async function getUser(id) {
   const user = await prisma.user.findUnique({
     where: {
       id: parseInt(id),
@@ -84,15 +110,11 @@ export const get = async (req, res) => {
       },
     },
   });
-  const roles = await prisma.role.findMany();
+  return user;
+}
 
-  res.render('admin/users/userEdit', { action: req.path, authenticated: true, user, roles });
-};
-
-export const post = async (req, res) => {
-  const { id } = req.params;
-  const { name, role, password } = req.body;
-  await prisma.user.update({
+async function updateUser(id: string, { name, role: roleId, password }: UserFields) {
+  const user = await prisma.user.update({
     where: {
       id: parseInt(id),
     },
@@ -100,13 +122,11 @@ export const post = async (req, res) => {
       name,
       role: {
         connect: {
-          id: parseInt(role),
+          id: parseInt(roleId),
         },
       },
       password,
     },
   });
-  res.redirect('/admin/users');
-};
-
-export { template } from './_template.js';
+  return user;
+}

@@ -1,11 +1,18 @@
 import type { User } from '@prisma/client';
-import type { Request, Response } from 'express';
 import { html } from 'lit';
-
-export const components = ['/public/js/pages/admin/users/index.js'];
 
 import '../../../components/Lists/resource-list/resource-list.js';
 import '../../../components/Lists/resource-list/resource-list-item.js';
+
+import prisma from '../../../db/client.js';
+
+export const route = '/admin/users';
+export const handler = async () => {
+  const users = await prisma.user.findMany();
+  return {
+    users,
+  };
+};
 
 type Data = { users: User[] };
 export const page = ({ users }: Data) => {
@@ -36,18 +43,13 @@ export const page = ({ users }: Data) => {
     </sl-card>
   `;
 };
+export const components = ['/public/js/pages/admin/users/index.js'];
 
-import prisma from '../../../db/client.js';
 import { requiresPermissionMiddleware } from '../../../middleware/auth.js';
 export const middleware = [
   requiresPermissionMiddleware('ADMIN', {
     unauthorizedRedirect: '/admin/login',
   }),
 ];
-export const get = async (_req: Request, res: Response) => {
-  const users = await prisma.user.findMany();
-  res.render('admin/users/userIndex', { authenticated: true, users });
-};
 
-export const route = '/admin/users';
 export { template } from './_template.js';
