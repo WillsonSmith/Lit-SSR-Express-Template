@@ -6,7 +6,7 @@ export const route = '/';
 export const title = 'Index';
 export const description = 'Index page';
 
-export const page = (data) => {
+export const page = data => {
   const { authenticated } = data;
   return html`
     <sl-card>

@@ -14,9 +14,7 @@ export const page = ({ magicLink, webAuthToken }) => {
       <div slot="header">
         <h2>Admin login</h2>
         ${magicLink
-          ? html`<p>
-              You are setting up the administrator account with a new passkey.
-            </p>`
+          ? html`<p>You are setting up the administrator account with a new passkey.</p>`
           : nothing}
       </div>
       <div>
