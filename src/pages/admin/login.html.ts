@@ -82,7 +82,7 @@ export const post = async (req, res) => {
   });
   const user = userQuery.at(0);
 
-  if (!user) {
+  if (!user || !user.password) {
     return res.redirect('/admin/login?error=No admin user found');
   }
 
