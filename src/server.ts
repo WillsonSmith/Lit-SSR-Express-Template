@@ -75,7 +75,7 @@ for (const pagePath of pagePaths) {
   app.get(route, ...middleware, get || handlerMiddleware, renderIt(pagePath));
 
   if (action) app.post(route, ...middleware, action);
-  if (post) app.post(route, ...middleware, post);
+  else if (post) app.post(route, ...middleware, post);
 }
 
 app.listen(port, () => {

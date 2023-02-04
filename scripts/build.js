@@ -23,7 +23,7 @@ function compileClient() {
   const components = glob.sync('src/public/components/**/*.ts');
   const publicFiles = glob
     .sync('src/public/**/*.ts')
-    .filter((file) => !file.startsWith('src/public/components'));
+    .filter(file => !file.startsWith('src/public/components'));
 
   const buildArgs = {
     bundle: true,
@@ -34,7 +34,6 @@ function compileClient() {
   };
   ensureSymlink('src/components', 'src/public/components');
 
-  /* @ts-ignore */
   esbuild({
     ...buildArgs,
     entryPoints: [...components, ...publicFiles],
@@ -46,7 +45,7 @@ function compileServer() {
   const components = glob.sync('src/public/components/**/*.ts');
   const filesOutsideOfClient = glob
     .sync('src/**/*.ts')
-    .filter((file) => !file.startsWith('src/public'));
+    .filter(file => !file.startsWith('src/public'));
 
   ensureSymlink('src/components', 'src/public/components');
   esbuild({
@@ -73,12 +72,12 @@ function compileServer() {
 function processCSS() {
   const files = glob.sync('src/**/*.css');
   esbuild({
-    entryPoints: files.filter((file) => !file.includes('_base.css')),
+    entryPoints: files.filter(file => !file.includes('_base.css')),
     sourcemap: true,
     outdir: 'app/public/css',
   });
   esbuild({
-    entryPoints: files.filter((file) => file.includes('_base.css')),
+    entryPoints: files.filter(file => file.includes('_base.css')),
     bundle: true,
     sourcemap: true,
     outdir: 'app/public/css',
