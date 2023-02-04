@@ -12,42 +12,46 @@ type Data = {
 
 export const page = ({ user, roles, action }: Data) => {
   const ActionType = user.id ? 'Update' : 'Create';
-  return html`
+
+  const form = html`
+    <form id="user-form" method="post" action=${ifDefined(action)}>
+      <form-layout columns=${2}>
+        <sl-input
+          label="Name"
+          id="name"
+          name="name"
+          placeholder="Name"
+          value=${user.name || ''}
+          help-text="The user's name."
+        ></sl-input>
+        <sl-select
+          label="Role"
+          id="role"
+          name="role"
+          help-text="The user's role."
+          value=${user.role.id}
+        >
+          ${roles.map(role => html` <sl-option value=${role.id}>${role.name}</sl-option> `)}
+        </sl-select>
+
+        <sl-input
+          label="Password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          type="password"
+          help-text="Passwords are temporary."
+        ></sl-input>
+      </form-layout>
+    </form>
+  `;
+
+  const card = html`
     <sl-card>
       <div slot="header">
         <h2>${ActionType} user</h2>
       </div>
-
-      <form id="user-form" method="post" action=${ifDefined(action)}>
-        <form-layout columns=${2}>
-          <sl-input
-            label="Name"
-            id="name"
-            name="name"
-            placeholder="Name"
-            value=${user.name || ''}
-            help-text="The user's name."
-          ></sl-input>
-          <sl-select
-            label="Role"
-            id="role"
-            name="role"
-            help-text="The user's role."
-            value=${user.role.id}
-          >
-            ${roles.map(role => html` <sl-option value=${role.id}>${role.name}</sl-option> `)}
-          </sl-select>
-
-          <sl-input
-            label="Password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            type="password"
-            help-text="Passwords are temporary."
-          ></sl-input>
-        </form-layout>
-      </form>
+      ${form}
       <div slot="footer">
         <sl-button type="submit" variant="primary" outline form="user-form"
           >${ActionType} user</sl-button
@@ -55,6 +59,8 @@ export const page = ({ user, roles, action }: Data) => {
       </div>
     </sl-card>
   `;
+
+  return card;
 };
 
 import { requiresPermissionMiddleware } from '../../../middleware/auth.js';
