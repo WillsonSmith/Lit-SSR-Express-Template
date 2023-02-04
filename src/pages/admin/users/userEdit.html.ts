@@ -22,10 +22,13 @@ export const handler = async req => {
   const user = await getUser(id);
   const roles = await prisma.role.findMany();
 
+  const breadcrumbPath = [...req.path.split('/').slice(0, -1), user.name].join('/');
+
   return {
     user,
     roles,
     action: req.path,
+    path: breadcrumbPath,
   };
 };
 

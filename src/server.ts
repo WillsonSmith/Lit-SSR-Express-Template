@@ -86,12 +86,17 @@ async function renderIt(path) {
   const templatePath = path.replace(`${__dirname}pages/`, '').replace('.html.js', '');
   if (templatePath.endsWith('.js')) return (_, res) => res.send('ok');
   return async (req, res) => {
-    const imported = await import(path);
-    for (const chunk of renderNew(imported, req.locals)) {
-      res.write(chunk);
-    }
-    res.end();
-
-    // res.render(templatePath, req.locals);
+    // try {
+    //   res.setHeader('Content-Type', 'text/html');
+    //   const imported = await import(path);
+    //   for (const chunk of renderNew(imported, req.locals)) {
+    //     res.write(chunk);
+    //   }
+    //   res.end();
+    // } catch (error) {
+    //   console.error(error);
+    //   res.status(500).send('Something went wrong.');
+    // }
+    res.render(templatePath, req.locals);
   };
 }

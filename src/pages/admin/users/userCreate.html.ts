@@ -1,5 +1,6 @@
 import prisma from '../../../db/client.js';
 export const route = '/admin/users/new';
+
 export const get = async (req, res) => {
   const roles = await prisma.role.findMany({
     select: {
@@ -18,6 +19,7 @@ export const get = async (req, res) => {
     },
     roles,
     action: req.path,
+    path: req.path,
   });
 };
 
