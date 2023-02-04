@@ -6,14 +6,21 @@ export const route = '/login';
 export const title = 'Login';
 export const description = 'Login page';
 
-export const components = ['/public/components/authentication/auth-form.js'];
+export const components = [
+  '/public/js/pages/login.js',
+  '/public/components/authentication/auth-form.js',
+];
 
 export const page = ({ webAuthToken, magicLink }) => {
-  return html`<auth-form
-    primary=${magicLink ? 'register' : 'login'}
-    magic-link=${magicLink}
-    web-auth-token=${webAuthToken}
-  ></auth-form>`;
+  return html`
+    <sl-card>
+      <auth-form
+        primary=${magicLink ? 'register' : 'login'}
+        magic-link=${magicLink}
+        web-auth-token=${webAuthToken}
+      ></auth-form>
+    </sl-card>
+  `;
 };
 
 import { authenticationMiddleware } from '../../middleware/auth.js';

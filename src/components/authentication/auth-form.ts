@@ -1,23 +1,16 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import {
-  startAuthentication,
-  startRegistration,
-} from '@simplewebauthn/browser';
+import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
 
 type PrimaryButton = 'login' | 'register';
 
-@customElement(`auth-form`)
+@customElement('auth-form')
 export class AuthForm extends LitElement {
-  @property({ type: String, attribute: 'web-auth-token' }) webAuthToken:
-    | string
-    | undefined = undefined;
-  @property({ type: String, attribute: 'magic-link' }) magicLink:
-    | string
-    | undefined = undefined;
-  @property({ type: String, attribute: 'primary' }) primary: PrimaryButton =
-    'login';
+  @property({ type: String, attribute: 'web-auth-token' }) webAuthToken: string | undefined =
+    undefined;
+  @property({ type: String, attribute: 'magic-link' }) magicLink: string | undefined = undefined;
+  @property({ type: String, attribute: 'primary' }) primary: PrimaryButton = 'login';
   render() {
     return html`
       <div class="form">
@@ -51,19 +44,17 @@ export class AuthForm extends LitElement {
     }
 
     const challengeUrl = '/login/generate-challenge';
-    const queryParams = new URLSearchParams([
-      [`webAuthToken`, this.webAuthToken],
-    ]);
+    const queryParams = new URLSearchParams([['webAuthToken', this.webAuthToken]]);
 
     const loginOptions = await fetch(`${challengeUrl}?${queryParams}`);
     const loginOptionsJson = await loginOptions.json();
 
     const credential = await startAuthentication(loginOptionsJson);
 
-    const response = await fetch(`/login/verify`, {
-      method: `POST`,
+    const response = await fetch('/login/verify', {
+      method: 'POST',
       headers: {
-        'Content-Type': `application/json`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         webAuthToken: this.webAuthToken,
@@ -74,7 +65,7 @@ export class AuthForm extends LitElement {
     const responseJson = await response.json();
 
     if (responseJson.success) {
-      console.log(`Authentication successful`);
+      console.log('Authentication successful');
       window.location.reload();
     }
   }
@@ -87,8 +78,8 @@ export class AuthForm extends LitElement {
 
     const challengeUrl = '/register/generate-challenge';
     const queryParams = new URLSearchParams([
-      [`webAuthToken`, this.webAuthToken],
-      [`magicLink`, this.magicLink],
+      ['webAuthToken', this.webAuthToken],
+      ['magicLink', this.magicLink],
     ]);
 
     const registerOptions = await fetch(`${challengeUrl}?${queryParams}`);
@@ -96,10 +87,10 @@ export class AuthForm extends LitElement {
 
     const credential = await startRegistration(registerOptionsJson);
 
-    const response = await fetch(`/register/verify-challenge`, {
-      method: `POST`,
+    const response = await fetch('/register/verify-challenge', {
+      method: 'POST',
       headers: {
-        'Content-Type': `application/json`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         webAuthToken: this.webAuthToken,
@@ -111,7 +102,7 @@ export class AuthForm extends LitElement {
     const responseJson = await response.json();
 
     if (responseJson.success) {
-      console.log(`Registration successful`);
+      console.log('Registration successful');
       window.location.reload();
     }
   }
