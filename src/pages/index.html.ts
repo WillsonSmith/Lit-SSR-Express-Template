@@ -1,3 +1,4 @@
+import type { User } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { html } from 'lit';
 export { template } from '../templates/root.template.js';
@@ -19,7 +20,7 @@ export const page = data => {
 
 export const components = ['/public/js/pages/index.js'];
 
-type RequestWithAuthDetails = Request & { authenticated: boolean; user: any };
+type RequestWithAuthDetails = Request & { authenticated: boolean; user: User };
 import { authenticationMiddleware } from '../middleware/auth.js';
 export const middleware = [authenticationMiddleware()];
 export const get = async (request: RequestWithAuthDetails, res: Response) => {

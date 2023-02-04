@@ -1,3 +1,6 @@
+import { config } from 'dotenv';
+config();
+import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -33,8 +36,8 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      name: 'Willson',
-      password: 'password',
+      name: 'Administrator',
+      password: await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
       role: {
         connect: {
           name: 'ADMIN',

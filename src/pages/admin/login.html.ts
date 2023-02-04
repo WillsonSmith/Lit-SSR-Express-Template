@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { html, nothing } from 'lit';
 
 export { template } from '../../templates/root.template.js';
@@ -47,11 +48,8 @@ export const page = ({ magicLink, webAuthToken }) => {
 };
 
 export const route = '/admin/login';
-
 import prisma from '../../db/client.js';
-
 import { authenticationMiddleware } from '../../middleware/auth.js';
-
 export const middleware = [
   authenticationMiddleware({
     authorizedRedirect: '/',
@@ -84,7 +82,15 @@ export const post = async (req, res) => {
   });
   const user = userQuery.at(0);
 
-  if (user.password !== req.body.password) {
+  if (!user) {
+    return res.redirect('/admin/login?error=No admin user found');
+  }
+
+  if (!user.password) return res.redirect('/admin/login?error=No admin password found');
+
+  const passwordMatch = await bcrypt.compare(req.body.password, user.password || '');
+
+  if (!passwordMatch) {
     return res.redirect('/admin/login?error=Incorrect password');
   }
 
