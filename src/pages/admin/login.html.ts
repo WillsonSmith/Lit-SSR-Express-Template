@@ -86,10 +86,7 @@ export const post = async (req, res) => {
     return res.redirect('/admin/login?error=No admin user found');
   }
 
-  if (!user.password) return res.redirect('/admin/login?error=No admin password found');
-
   const passwordMatch = await bcrypt.compare(req.body.password, user.password || '');
-
   if (!passwordMatch) {
     return res.redirect('/admin/login?error=Incorrect password');
   }
