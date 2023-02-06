@@ -87,26 +87,28 @@ function processCSS() {
   });
 }
 
+import { Worker } from 'node:worker_threads';
+
 const cachedStyles = new Set();
 async function compilePageStyles(file) {
-  // this leaks memory, spin up a new process instead
-  const { styles } = await import(`../${file}?update=${Date.now()}`);
+  try {
+    const workerResponse = await new Promise((resolve, reject) => {
+      const worker = new Worker('./scripts/compileStyles.js', {
+        workerData: {
+          file,
+          cachedStyles,
+        },
+      });
+      worker.on('message', resolve);
+      worker.on('error', reject);
+    });
 
-  if (styles) {
-    const outputPath = file.split('/').slice(0, -1).join('/');
-    const fileName = file.split('/').slice(-1)[0].split('.')[0];
-    for (const [index, style] of styles.entries()) {
-      if (!cachedStyles.has(style.cssText)) {
-        cachedStyles.add(style.cssText);
-        await esbuild({
-          stdin: {
-            contents: style.cssText,
-            resolveDir: 'src',
-            loader: 'css',
-          },
-          outfile: `${outputPath}/assets/css/${fileName}-${index}.css`,
-        });
+    if (workerResponse) {
+      for (const style of workerResponse) {
+        cachedStyles.add(style);
       }
     }
+  } catch (error) {
+    console.log('lol', error);
   }
 }
