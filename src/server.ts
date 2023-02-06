@@ -7,7 +7,6 @@ const port = 3000;
 
 import session from 'express-session';
 
-// import { renderPage, renderNew } from './renderer/render.js';
 import { renderPage } from './renderer/render.js';
 import glob from 'glob';
 
@@ -18,7 +17,7 @@ const pageDir = `${__dirname}pages`;
 
 app.engine('html.js', async (filePath, options, callback) => {
   try {
-    const imported = await import(filePath);
+    const imported = { ...(await import(filePath)), filePath };
     const markup = await renderPage(imported, options);
     callback(null, markup);
   } catch (error) {
@@ -59,6 +58,13 @@ app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/sh
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
   const { route, get, post, middleware = [], handler, action } = await import(pagePath);
+
+  const routePath = pagePath.replace('.html.js', '').split('/').slice(0, -1).join('/');
+  if (!routePath.endsWith('.js')) {
+    const expressRoute = route === '/' ? '' : route;
+    app.use(`${expressRoute}/assets`, express.static(`${routePath}/assets`));
+    // console.log(routePath);
+  }
 
   const handlerMiddleware = async (req, res, next) => {
     req.locals ??= {};

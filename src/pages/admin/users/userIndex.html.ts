@@ -1,5 +1,5 @@
 import type { User } from '@prisma/client';
-import { html } from 'lit';
+import { html, css } from 'lit';
 
 import '../../../components/Lists/resource-list/resource-list.js';
 import '../../../components/Lists/resource-list/resource-list-item.js';
@@ -16,6 +16,16 @@ export const handler = async req => {
 };
 
 type Data = { users: User[]; path?: string };
+export const styles = [
+  css`
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  `,
+];
+
 export const page = ({ users }: Data) => {
   return html`
     <style>

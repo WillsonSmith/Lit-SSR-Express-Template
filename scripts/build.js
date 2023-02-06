@@ -8,6 +8,9 @@ compileServer();
 processCSS();
 
 if (process.argv.includes('--watch')) {
+  choki.watch(['app/pages/**/*.html.js']).on('all', (_, file) => {
+    compilePageStyles(file);
+  });
   choki.watch(['src/public/**/*.ts']).on('all', () => {
     compileClient();
   });
@@ -41,7 +44,7 @@ function compileClient() {
   });
 }
 
-function compileServer() {
+async function compileServer() {
   const components = glob.sync('src/public/components/**/*.ts');
   const filesOutsideOfClient = glob
     .sync('src/**/*.ts')
@@ -82,4 +85,28 @@ function processCSS() {
     sourcemap: true,
     outdir: 'app/public/css',
   });
+}
+
+const cachedStyles = new Set();
+async function compilePageStyles(file) {
+  // this leaks memory, spin up a new process instead
+  const { styles } = await import(`../${file}?update=${Date.now()}`);
+
+  if (styles) {
+    const outputPath = file.split('/').slice(0, -1).join('/');
+    const fileName = file.split('/').slice(-1)[0].split('.')[0];
+    for (const [index, style] of styles.entries()) {
+      if (!cachedStyles.has(style.cssText)) {
+        cachedStyles.add(style.cssText);
+        await esbuild({
+          stdin: {
+            contents: style.cssText,
+            resolveDir: 'src',
+            loader: 'css',
+          },
+          outfile: `${outputPath}/assets/css/${fileName}-${index}.css`,
+        });
+      }
+    }
+  }
 }
