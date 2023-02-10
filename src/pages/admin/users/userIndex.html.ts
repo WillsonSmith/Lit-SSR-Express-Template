@@ -7,7 +7,6 @@ import '../../../components/Lists/resource-list/resource-list-item.js';
 import './components/my-component.js?hydrate=true';
 
 import prisma from '../../../db/client.js';
-
 export const route = '/admin/users';
 export const handler = async req => {
   const users = await prisma.user.findMany();
