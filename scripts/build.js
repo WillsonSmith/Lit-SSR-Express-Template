@@ -3,9 +3,8 @@
 import glob from 'glob';
 import choki from 'chokidar';
 import { build as esbuild } from 'esbuild';
-import { ensureSymlink } from 'fs-extra';
-import { pathToFileURL } from 'url';
 
+const cachedStyles = new Set();
 if (process.argv.includes('--watch')) {
   watch();
 }
@@ -16,7 +15,31 @@ import { join } from 'path';
 async function watch() {
   console.log('Watching files for changes...');
 
-  // Compile server.
+  await compileNonPageServerTypescript();
+  await compilePageTypescript();
+  await compileClientTypescript();
+  await compilePublicStyles();
+
+  choki.watch('src/**/*.ts').on('change', async path => {
+    if (!path.includes('.html.ts')) {
+      compileClientTypescript();
+      compileNonPageServerTypescript();
+    }
+
+    if (path.includes('.html.ts')) {
+      compilePageTypescript();
+    }
+  });
+
+  choki.watch('app/pages/**/*.html.js').on('change', async path => {
+    // There is an issue here. Adding a CSS property or updating it is fine, but if I remove it the cache doesn't update.
+    console.log(`Compiling page style for ${path}...`);
+    compilePageStyles(path);
+  });
+}
+
+async function compileNonPageServerTypescript() {
+  console.log('Compiling non-page server typescript...');
   const allTypescript = glob
     .sync('src/**/*.ts')
     .filter(file => !file.includes('public'))
@@ -30,8 +53,10 @@ async function watch() {
     platform: 'node',
     outdir: 'app',
   });
+}
 
-  // Compile client.
+async function compileClientTypescript() {
+  console.log('Compiling client typescript...');
   const componentDirs = glob.sync('src/**/components/**/*.ts');
   const componentsInputs = componentDirs.map(directory => {
     const asPublic = directory.replace('src/', '');
@@ -63,10 +88,11 @@ async function watch() {
     platform: 'browser',
     outdir: 'app/public',
   });
+}
 
-  // Compile pages.
+async function compilePageTypescript() {
+  console.log('Compiling page typescript...');
   const pages = glob.sync('src/pages/**/*.html.ts');
-
   for (const page of pages) {
     await esbuild({
       entryPoints: [page],
@@ -132,12 +158,10 @@ async function watch() {
       ],
     });
   }
+}
 
-  const compiledPages = glob.sync('app/pages/**/*.html.js');
-  for (const page of compiledPages) {
-    compilePageStyles(page);
-  }
-
+async function compilePublicStyles() {
+  console.log('Compiling public styles...');
   const publicStyles = glob.sync('src/public/**/*.css');
   esbuild({
     entryPoints: publicStyles.filter(file => !file.includes('_base.css')),
@@ -153,8 +177,6 @@ async function watch() {
 }
 
 import { Worker } from 'node:worker_threads';
-
-const cachedStyles = new Set();
 async function compilePageStyles(file) {
   try {
     const workerResponse = await new Promise((resolve, reject) => {
