@@ -56,15 +56,15 @@ const nodeModules = join(__dirname, '..', 'node_modules');
 app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/shoelace')));
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
+const staticRoutes = await import('./routes.js');
+for (const { path, route } of staticRoutes.routes) {
+  // this might not actually work, I may have to do it from within the build file.
+  // generate static routes for public files in relative directories
+  app.use(route, express.static(join(__dirname, path)));
+}
+
 for (const pagePath of pagePaths) {
   const { route, get, post, middleware = [], handler, action } = await import(pagePath);
-
-  const routePath = pagePath.replace('.html.js', '').split('/').slice(0, -1).join('/');
-  if (!routePath.endsWith('.js')) {
-    const expressRoute = route === '/' ? '' : route;
-    app.use(`${expressRoute}/assets`, express.static(`${routePath}/assets`));
-    // console.log(routePath);
-  }
 
   const handlerMiddleware = async (req, res, next) => {
     req.locals ??= {};
