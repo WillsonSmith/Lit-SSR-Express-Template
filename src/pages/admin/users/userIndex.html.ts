@@ -55,7 +55,6 @@ export const page = ({ users }: Data) => {
     </sl-card>
   `;
 };
-// export const components = ['/public/js/pages/admin/users/index.js'];
 
 import { requiresPermissionMiddleware } from '../../../middleware/auth.js';
 export const middleware = [
