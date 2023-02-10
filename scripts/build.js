@@ -137,6 +137,9 @@ async function compilePageTypescript() {
                   .slice(0, -1)
                   .join('/');
                 const relativeComponentImportPaths = componentImports.map(component => {
+                  // NOTE: This is a hack to get the relative path to the component.
+                  // This will not work if you want to import a component from a different directory.
+                  console.warn('HACK: Component imports of external directories will not work.');
                   return join(publicPath, component.replace('./', '/'));
                 });
 
