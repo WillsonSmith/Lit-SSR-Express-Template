@@ -1,11 +1,12 @@
 import type { User } from '@prisma/client';
-import { html } from 'lit';
+import { html, css } from 'lit';
 
 import '../../../components/Lists/resource-list/resource-list.js';
 import '../../../components/Lists/resource-list/resource-list-item.js';
 
-import prisma from '../../../db/client.js';
+import './components/my-component.js?hydrate=true';
 
+import prisma from '../../../db/client.js';
 export const route = '/admin/users';
 export const handler = async req => {
   const users = await prisma.user.findMany();
@@ -16,6 +17,16 @@ export const handler = async req => {
 };
 
 type Data = { users: User[]; path?: string };
+export const styles = [
+  css`
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  `,
+];
+
 export const page = ({ users }: Data) => {
   return html`
     <style>
@@ -44,7 +55,6 @@ export const page = ({ users }: Data) => {
     </sl-card>
   `;
 };
-export const components = ['/public/js/pages/admin/users/index.js'];
 
 import { requiresPermissionMiddleware } from '../../../middleware/auth.js';
 export const middleware = [

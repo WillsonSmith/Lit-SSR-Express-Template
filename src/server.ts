@@ -7,7 +7,6 @@ const port = 3000;
 
 import session from 'express-session';
 
-// import { renderPage, renderNew } from './renderer/render.js';
 import { renderPage } from './renderer/render.js';
 import glob from 'glob';
 
@@ -18,7 +17,7 @@ const pageDir = `${__dirname}pages`;
 
 app.engine('html.js', async (filePath, options, callback) => {
   try {
-    const imported = await import(filePath);
+    const imported = { ...(await import(filePath)), filePath };
     const markup = await renderPage(imported, options);
     callback(null, markup);
   } catch (error) {
@@ -58,7 +57,12 @@ app.use('/public/shoelace', express.static(join(nodeModules, '@shoelace-style/sh
 
 const pagePaths = glob.sync(`${__dirname}/pages/**/*.*.js`);
 for (const pagePath of pagePaths) {
-  const { route, get, post, middleware = [], handler, action } = await import(pagePath);
+  const { route, get, post, middleware = [], handler, action, styles } = await import(pagePath);
+
+  if (styles) {
+    const assetsPath = join(pagePath.split('/').slice(0, -1).join('/'), 'assets');
+    app.use(`${route}/assets`, express.static(assetsPath));
+  }
 
   const handlerMiddleware = async (req, res, next) => {
     req.locals ??= {};
@@ -87,17 +91,20 @@ async function renderIt(path) {
   const templatePath = path.replace(`${__dirname}pages/`, '').replace('.html.js', '');
   if (templatePath.endsWith('.js')) return (_, res) => res.send('ok');
   return async (req, res) => {
-    // try {
-    //   res.setHeader('Content-Type', 'text/html');
-    //   const imported = await import(path);
-    //   for (const chunk of renderNew(imported, req.locals)) {
-    //     res.write(chunk);
-    //   }
-    //   res.end();
-    // } catch (error) {
-    //   console.error(error);
-    //   res.status(500).send('Something went wrong.');
-    // }
     res.render(templatePath, req.locals);
   };
 }
+
+// async function streamRender(res, req, path) {
+//   try {
+//     res.setHeader('Content-Type', 'text/html');
+//     const imported = await import(path);
+//     for (const chunk of renderNew(imported, req.locals)) {
+//       res.write(chunk);
+//     }
+//     res.end();
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Something went wrong.');
+//   }
+// }

@@ -2,7 +2,7 @@ import type { RenderResult } from '@lit-labs/ssr';
 import { render } from '@lit-labs/ssr';
 
 export const renderPage = async (pageImport, data) => {
-  const { template, page, components, ...rest } = pageImport;
+  const { template, page, components, styles, filePath, route, ...rest } = pageImport;
 
   return templateToString(
     render(
@@ -12,10 +12,19 @@ export const renderPage = async (pageImport, data) => {
       }),
     ),
     components,
+    styles,
+    filePath,
+    route,
   );
 };
 
-async function templateToString(template: RenderResult, componentsToHydrate) {
+async function templateToString(
+  template: RenderResult,
+  componentsToHydrate,
+  styles,
+  filePath,
+  route,
+) {
   let outputString = '';
   for (const chunk of template) {
     const stringToTransform = await chunk;
@@ -26,6 +35,22 @@ async function templateToString(template: RenderResult, componentsToHydrate) {
   outputString = outputString.replace(/<(.*?)-so/g, '<$1');
 
   outputString = outputString.replace('</body>', hydrateString(componentsToHydrate) + '</body>');
+
+  if (styles) {
+    const fileName = filePath.split('/').pop().replace('.html.js', '');
+    outputString = outputString.replace(
+      '</head>',
+      `${styles
+        .map(
+          (_, index) =>
+            `<link rel="stylesheet" href="${
+              route === '/' ? '' : route
+            }/assets/css/${fileName}-${index}.css">`,
+        )
+        .join('\n')}
+    </head>`,
+    );
+  }
 
   return outputString;
 }
