@@ -10,7 +10,6 @@ async function process() {
 
     let returned = [];
     for (const [index, style] of styles.entries()) {
-      console.log(cachedStyles.has(style.cssText));
       if (cachedStyles.has(style.cssText)) continue;
       const css = style.cssText;
 

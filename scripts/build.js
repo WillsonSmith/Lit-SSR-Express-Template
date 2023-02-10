@@ -19,6 +19,7 @@ async function watch() {
   await compilePageTypescript();
   await compileClientTypescript();
   await compilePublicStyles();
+  await compileAllPageStyles();
 
   choki.watch('src/**/*.ts').on('change', async path => {
     if (!path.includes('.html.ts')) {
@@ -32,7 +33,8 @@ async function watch() {
   });
 
   choki.watch('app/pages/**/*.html.js').on('change', async path => {
-    // There is an issue here. Adding a CSS property or updating it is fine, but if I remove it the cache doesn't update.
+    // Issue with CSS Cache. I am using a Set to cache, I am adding to it, but I am not removing from it.
+    // Therefore when I change a file to a previous state it will not recompile the CSS.
     console.log(`Compiling page style for ${path}...`);
     compilePageStyles(path);
   });
@@ -176,6 +178,13 @@ async function compilePublicStyles() {
   });
 }
 
+async function compileAllPageStyles() {
+  const pages = glob.sync('app/pages/**/*.html.js');
+  for (const page of pages) {
+    compilePageStyles(page);
+  }
+}
+
 import { Worker } from 'node:worker_threads';
 async function compilePageStyles(file) {
   try {
@@ -196,6 +205,6 @@ async function compilePageStyles(file) {
       }
     }
   } catch (error) {
-    console.log('lol', error);
+    console.log('Error compiling page styles:', error);
   }
 }
