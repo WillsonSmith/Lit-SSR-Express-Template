@@ -1,15 +1,21 @@
 import type { Request, Response } from 'express';
 import { html } from 'lit';
 
-export const title = 'Admin';
-export const description = 'Admin page';
+export const title = 'Admin Dashboard';
+export const description = 'Manage the website.';
+
+import './components/adminIndex.js?hydrate=true';
+import '../../components/Lists/resource-list/resource-list.js';
+import '../../components/Lists/resource-list/resource-list-item.js';
 export const page = () => {
   return html`
     <h1>Admin</h1>
-    <p>Admin page</p>
-    <div>
-      <a href="/admin/users">Users</a>
-    </div>
+    <sl-card>
+      <p slot="header">Manage</p>
+      <resource-list>
+        <resource-list-item href="/admin/users">Users</resource-list-item>
+      </resource-list>
+    </sl-card>
   `;
 };
 

@@ -61,7 +61,7 @@ for (const pagePath of pagePaths) {
 
   if (styles) {
     const assetsPath = join(pagePath.split('/').slice(0, -1).join('/'), 'assets');
-    app.use(`${route}/assets`, express.static(assetsPath));
+    app.use(`${route}/assets`.replace('//', '/'), express.static(assetsPath));
   }
 
   const handlerMiddleware = async (req, res, next) => {

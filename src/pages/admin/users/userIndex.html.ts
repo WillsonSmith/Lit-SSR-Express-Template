@@ -4,8 +4,6 @@ import { html, css } from 'lit';
 import '../../../components/Lists/resource-list/resource-list.js';
 import '../../../components/Lists/resource-list/resource-list-item.js';
 
-import './components/my-component.js?hydrate=true';
-
 import prisma from '../../../db/client.js';
 export const route = '/admin/users';
 export const handler = async req => {

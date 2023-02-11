@@ -4,11 +4,13 @@ import { customElement, property } from 'lit/decorators.js';
 @customElement('main-nav')
 export class MainNav extends LitElement {
   @property({ type: Boolean }) authenticated = false;
+  @property({ type: Boolean }) isAdmin = false;
   render() {
     return html`
       <nav>
         <ul role="list">
           <main-nav-item href="/">Home</main-nav-item>
+          ${this.isAdmin ? html`<main-nav-item href="/admin">Admin</main-nav-item>` : ''}
           ${this.authenticated
             ? html`<main-nav-item href="/logout">Logout</main-nav-item>`
             : html`<main-nav-item href="/login">Login</main-nav-item>`}
@@ -25,6 +27,10 @@ export class MainNav extends LitElement {
         list-style: none;
         margin: 0;
         padding: 0;
+      }
+
+      ul > *:first-child {
+        flex: 1;
       }
     `,
   ];
