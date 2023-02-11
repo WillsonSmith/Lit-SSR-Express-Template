@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { html } from 'lit';
 
-export const title = 'Admin';
-export const description = 'Admin page';
+export const title = 'Admin Dashboard';
+export const description = 'Manage the website.';
 
 import '../../components/Lists/resource-list/resource-list.js';
 import '../../components/Lists/resource-list/resource-list-item.js';

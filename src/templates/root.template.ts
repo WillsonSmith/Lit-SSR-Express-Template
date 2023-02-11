@@ -4,7 +4,6 @@ import { html } from 'lit';
 import '../components/page-layout.js';
 export const template = (page, data): HTMLTemplateResult => {
   const { title = 'My App', description = 'My cool app', lang = 'en' } = data;
-
   return html`
     <!DOCTYPE html>
     <html-so lang=${lang} class="sl-theme-dark">
@@ -18,7 +17,7 @@ export const template = (page, data): HTMLTemplateResult => {
       </head>
       <body>
         <page-layout size="medium">
-          <main-nav ?authenticated=${data.authenticated}></main-nav>
+          <main-nav ?authenticated=${data.authenticated} ?isAdmin=${data.isAdmin}></main-nav>
           ${page(data)}
         </page-layout>
         <script type="module">

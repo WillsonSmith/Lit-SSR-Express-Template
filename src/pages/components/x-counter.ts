@@ -9,14 +9,21 @@ export class Counter extends LitElement {
     setTimeout(() => {
       this.hydrated = true;
     }, 500);
+
+    import('@shoelace-style/shoelace/dist/components/button/button.js');
+    import('@shoelace-style/shoelace/dist/components/icon/icon.js');
   }
+
   render() {
     return html`
-      <div>${this.hydrated ? 'Hydrated' : 'Not hydrated'}</div>
       <div class="x-counter">
-        <button @click=${this.decrement}>-</button>
+        <sl-button circle @click=${this.decrement}
+          ><sl-icon name="dash-circle"></sl-icon
+        ></sl-button>
         <span>${this.count}</span>
-        <button @click=${this.increment}>+</button>
+        <sl-button circle @click=${this.increment}
+          ><sl-icon name="plus-circle"></sl-icon
+        ></sl-button>
       </div>
     `;
   }
@@ -43,8 +50,10 @@ export class Counter extends LitElement {
         gap: var(--sl-spacing-medium);
         font-variant-numeric: tabular-nums;
 
-        padding: var(--sl-spacing-medium);
+        padding: var(--sl-spacing-2x-small);
         border: 1px solid var(--sl-color-gray-200);
+        border-radius: 50px;
+        background-color: var(--sl-color-gray-100);
       }
 
       button {
