@@ -4,7 +4,6 @@ import glob from 'glob';
 import choki from 'chokidar';
 import { build as esbuild } from 'esbuild';
 
-const cachedStyles = new Set();
 if (process.argv.includes('--watch')) {
   watch();
 }
@@ -32,11 +31,10 @@ async function watch() {
     }
   });
 
+  const cssCache = new Map();
   choki.watch('app/pages/**/*.html.js').on('change', async path => {
-    // Issue with CSS Cache. I am using a Set to cache, I am adding to it, but I am not removing from it.
-    // Therefore when I change a file to a previous state it will not recompile the CSS.
     console.log(`Compiling page style for ${path}...`);
-    compilePageStyles(path);
+    compilePageStyles(path, cssCache);
   });
 }
 
@@ -181,18 +179,19 @@ async function compilePublicStyles() {
 async function compileAllPageStyles() {
   const pages = glob.sync('app/pages/**/*.html.js');
   for (const page of pages) {
-    compilePageStyles(page);
+    compilePageStyles(page, new Map());
   }
 }
 
 import { Worker } from 'node:worker_threads';
-async function compilePageStyles(file) {
+
+async function compilePageStyles(file, cache) {
   try {
     const workerResponse = await new Promise((resolve, reject) => {
       const worker = new Worker('./scripts/compileStyles.js', {
         workerData: {
           file,
-          cachedStyles,
+          cachedStyles: cache,
         },
       });
       worker.on('message', resolve);
@@ -201,7 +200,7 @@ async function compilePageStyles(file) {
 
     if (workerResponse) {
       for (const style of workerResponse) {
-        cachedStyles.add(style);
+        cache.set(file, style);
       }
     }
   } catch (error) {
