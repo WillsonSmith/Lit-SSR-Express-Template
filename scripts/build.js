@@ -4,7 +4,6 @@ import glob from 'glob';
 import choki from 'chokidar';
 import { build as esbuild } from 'esbuild';
 
-const cachedStyles = new Set();
 if (process.argv.includes('--watch')) {
   watch();
 }
@@ -34,8 +33,6 @@ async function watch() {
 
   const cssCache = new Map();
   choki.watch('app/pages/**/*.html.js').on('change', async path => {
-    // Issue with CSS Cache. I am using a Set to cache, I am adding to it, but I am not removing from it.
-    // Therefore when I change a file to a previous state it will not recompile the CSS.
     console.log(`Compiling page style for ${path}...`);
     compilePageStyles(path, cssCache);
   });
