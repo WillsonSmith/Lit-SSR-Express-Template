@@ -10,9 +10,8 @@ async function process() {
 
     let returned = [];
     for (const [index, style] of styles.entries()) {
-      if (cachedStyles.has(style.cssText)) continue;
+      if (cachedStyles.get(filePath) === style.cssText) continue;
       const css = style.cssText;
-
       returned.push(css);
 
       esbuild({
