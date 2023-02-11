@@ -4,6 +4,7 @@ import { html } from 'lit';
 export const title = 'Admin Dashboard';
 export const description = 'Manage the website.';
 
+import './components/adminIndex.js?hydrate=true';
 import '../../components/Lists/resource-list/resource-list.js';
 import '../../components/Lists/resource-list/resource-list-item.js';
 export const page = () => {
@@ -15,7 +16,6 @@ export const page = () => {
         <resource-list-item href="/admin/users">Users</resource-list-item>
       </resource-list>
     </sl-card>
-    <script type="module" src="/public/pages/admin/components/adminIndex.js"></script>
   `;
 };
 
