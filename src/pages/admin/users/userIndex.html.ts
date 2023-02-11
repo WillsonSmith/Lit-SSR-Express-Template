@@ -23,7 +23,6 @@ export const styles = [
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: blue;
     }
   `,
 ];
